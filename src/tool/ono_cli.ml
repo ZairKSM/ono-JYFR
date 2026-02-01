@@ -73,3 +73,7 @@ let source_file =
   let doc = "Source file to analyze." in
   Arg.(
     required & pos 0 (some existing_file_conv) None (info [] ~doc ~docv:"FILE"))
+
+let seed =
+  let doc = "seed pour pouvoire test les random." in
+  Arg.(value & opt (some int) None (info ["seed"] ~doc ~docv:"SEED"))
