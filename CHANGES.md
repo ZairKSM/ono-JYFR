@@ -22,3 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Erreur dans `$factorial` pour les entrées négatives, maintenant retourne 0 au lieu de causer une erreur
 
 ### [?.?.?] 2026-??-??
+### Added
+- Fonction `sleep` pour attendre un nombre de millisecondes ([#9](https://github.com/ZairKSM/ono-JYFR/issues/9))
+- Fonction `print_cell` pour afficher une cellule vivante ou morte ([#9](https://github.com/ZairKSM/ono-JYFR/issues/9))
+- Fonction `newline` pour ajouter un saut de ligne ([#9](https://github.com/ZairKSM/ono-JYFR/issues/9))
+- Fonction `clear_screen` pour afficher et vider le buffer d'affichage ([#9](https://github.com/ZairKSM/ono-JYFR/issues/9))

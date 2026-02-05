@@ -7,6 +7,6 @@
   symbolic_driver
   symbolic_ono_module
   syntax)
- (libraries fpath kdo logs)
+ (libraries fpath kdo logs game_constant)
  (instrumentation
   (backend bisect_ppx)))

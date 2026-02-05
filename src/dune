@@ -1,0 +1,4 @@
+(library
+ (name game_constant)
+ (public_name ono.game_constant)
+ (modules GameConstant))
