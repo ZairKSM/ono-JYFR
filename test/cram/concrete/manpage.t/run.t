@@ -4,11 +4,15 @@ Test the output of the man page:
          ono-concrete
   
   SYNOPSIS
-         ono concrete [OPTION]… FILE
+         ono concrete [--seed=SEED] [OPTION]… FILE
   
   ARGUMENTS
          FILE (required)
              Source file to analyze.
+  
+  OPTIONS
+         --seed=SEED
+             seed pour pouvoire test les random.
   
   COMMON OPTIONS
          --color=WHEN (absent=auto)
