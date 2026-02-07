@@ -49,22 +49,44 @@
 
         i32.store ;; on store indice et les 4 bytes modifié 
     )
+    ;; fonction qui converti les deux coordonné en une coordonné uniquie (linéaire)
+    (func $convert (param $x i32) (param $y i32) (result i32)
+        local.get $x
+        global.get $w
+        i32.mul
 
-    ;; mid niveau set 
-    (func $set)
-
-    ;; mid niveau get
-    (func $get)
+        local.get $y
+        i32.add
+    )
     
     ;; haut niveau
-    (func $set_cell (param $x i32) (param $y i32) (param $elem i32) (result i32)
-        i32.const 0
+    (func $set_cell (param $x i32) (param $y i32) (param $elem i32)
+        ;; TODO : check avant si on est pas out of bound
+
+        local.get $x
+
+        local.get $y
+
+        call $convert
+
+        local.get $elem
+
+        call $set_bit
+
     )
 
     ;; haut niveau
     (func $get_cell (param $x i32) (param $y i32) (result i32)
         ;; TODO on check avant si on est pas out of bound
-        i32.const 0
+        ;; if (i32.ge_u (local.get $x) (i32.const 0) ) (i32.lt_u (local.get $x) (global.get $w))
+
+        local.get $x
+
+        local.get $y
+
+        call $convert
+
+        call $get_bit
     )
 
     (func $main
