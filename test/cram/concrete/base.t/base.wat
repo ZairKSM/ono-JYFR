@@ -1,11 +1,10 @@
 (module $base
-    (func $print_i64 (import "ono" "print_i64") (param i64))
     (func $print_i32 (import "ono" "print_i32") (param i32))
 
     (global $w      i32  (i32.const 42))  ;; width
     (global $h      i32  (i32.const 42))  ;; height
 
-    (memory 10)   
+    (memory 10_000)   
 
     ;; bas niveua
     ;; recuperer les bon 8 bits associé
@@ -21,7 +20,9 @@
     )
 
     ;; bas niveau
-    ;; recup tous les bit de l'indice et reverse 
+    ;; on decale a droite pour "effacer" les 8 bits de droite
+    ;; puis on decale a gauche pour revenir sur l'entier precedent sans les 8 premier bits
+    ;; on applique un or (addition gentille) qui permet d'ajouter l'entier ($elem) au debut
     ;; et ajoute l'elemeent au debut
     (func $pre_set_bit (param $i i32) (param $elem i32) (result i32)
         ;; on recup les 4 bytes
@@ -49,8 +50,9 @@
 
         i32.store ;; on store indice et les 4 bytes modifié 
     )
+
     ;; fonction qui converti les deux coordonné en une coordonné uniquie (linéaire)
-    (func $convert (param $x i32) (param $y i32) (result i32)
+    (func $convertToLinear (param $x i32) (param $y i32) (result i32)
         local.get $x
         global.get $w
         i32.mul
@@ -58,16 +60,83 @@
         local.get $y
         i32.add
     )
+    ;; fonction qui converti une coordonnée linéaire en deux coordonnée x et y
+    (func $convertToXY (param $i i32) (result i32) (result i32)
+        ;; x
+        
+        local.get $i
+        global.get $w
+        i32.div_u
+        
+        ;;y
+        local.get $i
+        global.get $w
+        i32.rem_u
+
+    
+    
+    )
+    ;; méthode qui permet de check si les coordonnée sont out ou in bound
+    (func $isValid (param $x i32) (param $y i32) (result i32)
+
+        local.get $x
+        i32.const 0
+        i32.lt_u 
+
+        (if (then 
+            i32.const 0
+            return
+        ))
+
+        local.get $x
+        global.get $w
+        i32.ge_u
+
+        (if (then 
+            i32.const 0
+            return
+        ))
+
+        local.get $y
+        i32.const 0
+        i32.lt_u 
+
+        (if (then 
+            i32.const 0
+            return
+        ))
+
+        local.get $y
+        global.get $h
+        i32.ge_u
+
+        (if (then 
+            i32.const 0
+            return
+        ))
+
+        i32.const 1
+    )
     
     ;; haut niveau
     (func $set_cell (param $x i32) (param $y i32) (param $elem i32)
-        ;; TODO : check avant si on est pas out of bound
+        local.get $x
+
+        local.get $y
+
+        call $isValid
+        i32.const 1
+        i32.ne 
+        (if (then
+            return ;; on ne fait rien
+        ))
+
 
         local.get $x
 
         local.get $y
 
-        call $convert
+        call $convertToLinear
 
         local.get $elem
 
@@ -79,20 +148,28 @@
     (func $get_cell (param $x i32) (param $y i32) (result i32)
         ;; TODO on check avant si on est pas out of bound
         ;; if (i32.ge_u (local.get $x) (i32.const 0) ) (i32.lt_u (local.get $x) (global.get $w))
+        local.get $x
+
+        local.get $y
+
+        call $isValid
+        i32.const 1
+        i32.ne 
+        (if (then
+            i32.const -1 ;; erreur
+            return
+        ))
 
         local.get $x
 
         local.get $y
 
-        call $convert
+        call $convertToLinear
 
         call $get_bit
     )
 
     (func $main
-    ;;   call $init_memory
-      i64.const 50000
-      call $print_i64
 
       (i32.const 0) ;;indice ( ou offset)
       (i32.const 10) ;; elem
@@ -141,6 +218,65 @@
 
       (i32.const 0) ;; indice
       i32.load 
+      call $print_i32
+
+
+      i32.const 1
+      i32.const 1
+      call $convertToLinear
+      call $print_i32
+
+      
+      i32.const 43
+      call $convertToXY
+      call $print_i32
+      call $print_i32
+
+      i32.const 43
+      i32.const 1
+      call $isValid
+      call $print_i32
+
+      i32.const 1
+      i32.const 1
+      call $isValid
+      call $print_i32
+
+      i32.const 1
+      i32.const 1
+      i32.const 1
+      call $set_cell
+
+      i32.const 1
+      i32.const 1
+      call $get_cell
+      call $print_i32
+
+      i32.const 1
+      i32.const 1
+      i32.const 8
+      call $set_cell
+
+
+      i32.const 0
+      i32.const 1
+      i32.const 9
+      call $set_cell
+
+
+      i32.const 1
+      i32.const 1
+      call $get_cell
+      call $print_i32
+
+      i32.const 0
+      i32.const 1
+      call $get_cell
+      call $print_i32
+
+      i32.const 42
+      i32.const 1
+      call $get_cell
       call $print_i32
 
     )
