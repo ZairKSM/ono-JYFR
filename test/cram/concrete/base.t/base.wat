@@ -42,10 +42,10 @@
     ;; bas niveau - gentil
     (func $set_bit (param $i i32) (param $elem i32)
 
-        (local.get $i) ;; premier argument de i32
+        (local.get $i) ;; premier argument de i32 store
 
-        (local.get $i) 
-        (local.get $elem) 
+        (local.get $i) ;; premier arg de pre_set_bit
+        (local.get $elem) ;; second arg de pre_set_bit
         call $pre_set_bit
 
         i32.store ;; on store indice et les 4 bytes modifié 
@@ -59,6 +59,7 @@
 
         local.get $y
         i32.add
+        ;; coord |- w = x' * w + y'
     )
     ;; fonction qui converti une coordonnée linéaire en deux coordonnée x et y
     (func $convertToXY (param $i i32) (result i32) (result i32)
@@ -74,41 +75,41 @@
         i32.rem_u
 
     
-    
+        ;; coord |- w = x' * w + y'
     )
     ;; méthode qui permet de check si les coordonnée sont out ou in bound
     (func $isValid (param $x i32) (param $y i32) (result i32)
 
         local.get $x
         i32.const 0
-        i32.lt_u 
+        i32.lt_u ;; x < 0
 
-        (if (then 
+        (if (then ;; si x < 0 on retourne 0
             i32.const 0
             return
         ))
 
         local.get $x
         global.get $w
-        i32.ge_u
+        i32.ge_u ;; x >= width
 
         (if (then 
-            i32.const 0
+            i32.const 0 ;; si x >= width on retourne 0
             return
         ))
 
         local.get $y
         i32.const 0
-        i32.lt_u 
-
+        i32.lt_u ;; y < 0
+        ;; TODO : less than unsigned , et on check avec nombre negatif a remplase par lt_s
         (if (then 
-            i32.const 0
+            i32.const 0 ;; si y < 0 on retourne 0
             return
         ))
 
         local.get $y
         global.get $h
-        i32.ge_u
+        i32.ge_u ;; y >= height
 
         (if (then 
             i32.const 0
