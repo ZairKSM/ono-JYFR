@@ -5,6 +5,7 @@
     (func $newline (import "ono" "newline"))
     (func $clear_screen (import "ono" "clear_screen"))
     
+
     
     (func $test_functions
         (call $print_cell (i32.const 1))
@@ -38,9 +39,10 @@
         (call $print_cell (i32.const 0))
         (call $newline)
         (call $clear_screen)
-        (call $sleep (i32.const 500))  
-
+        (call $sleep (i32.const 500)) 
     )
+
+
     
     (func $main (call $test_functions) )
     
