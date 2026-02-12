@@ -1,0 +1,16 @@
+repos:
+  - repo: local
+    hooks:
+      - id: dune-build
+        name: dune build
+        entry: dune build
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: dune-runtest
+        name: dune runtest
+        entry: dune runtest
+        language: system
+        pass_filenames: false
+        always_run: true
