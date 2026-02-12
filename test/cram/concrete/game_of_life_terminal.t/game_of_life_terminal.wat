@@ -10,6 +10,7 @@
 
     (memory 10_000)   
 
+    ;; Deprecated
     ;; bas niveua
     ;; recuperer les bon 8 bits associé
     (func $get_bit (param $i i32) (result i32)
@@ -22,7 +23,14 @@
         i32.const 24 ;; 32-8 = 24; on decale vers la droite pour recuperer le bon nombre final
         i32.shr_u
     )
+    
+    ;; function get 
+    (func $get (param $i i32) (result i32)
+        (local.get $i)
+        i32.load8_u
+    )
 
+    ;; Deprecated used in $set_bit
     ;; bas niveau
     ;; on decale a droite pour "effacer" les 8 bits de droite
     ;; puis on decale a gauche pour revenir sur l'entier precedent sans les 8 premier bits
@@ -42,7 +50,7 @@
         (local.get $elem)
         i32.or
     )
-
+    ;; Deprecated
     ;; bas niveau - gentil
     (func $set_bit (param $i i32) (param $elem i32)
 
@@ -53,6 +61,13 @@
         call $pre_set_bit
 
         i32.store ;; on store indice et les 4 bytes modifié 
+    )
+
+    ;; function set (store 32 bit intger into 8 bit)
+    (func $set (param $i i32) (param $elem i32)
+        (local.get $i)
+        (local.get $elem)
+        i32.store8
     )
 
     ;; fonction qui converti les deux coordonné en une coordonné uniquie (linéaire)
@@ -145,7 +160,7 @@
 
         local.get $elem
 
-        call $set_bit
+        call $set
 
     )
 
@@ -171,7 +186,7 @@
 
         call $convertToLinear
 
-        call $get_bit
+        call $get
     )
     
     (func $test_functions
@@ -214,11 +229,11 @@
 
         (i32.const 0) ;;indice ( ou offset)
         (i32.const 2) ;; elem
-        call $set_bit
+        call $set
         ;;   call $print_i32
         
         (i32.const 0)
-        call $get_bit
+        call $get
         call $print_i32
         
 
