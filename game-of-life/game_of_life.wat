@@ -7,21 +7,27 @@
 
   (global $w i32 (i32.const 42)) ;; width  (colonnes)
   (global $h i32 (i32.const 42)) ;; height (lignes)
+  (global $turn (mut i32) (i32.const 0))
 
   (global $total_len i32 (i32.mul (global.get $w) (global.get $h))) ;; number total of cell
-  ;; 2 full game in a row in the memory
+
 
   (memory 1) ;; 1 page = 64 Ko, 
+
+
+  (func $alternate 
+        (if (i32.eq (global.get $total_len) (global.get $turn) )
+        (then (global.set $turn (i32.const 0)))
+        (else (global.set $turn (global.get $total_len)))
+        )
+    )
+            
 
   ;; Convertit (row, col) en indice linéaire : row * w + col (car la mémoire en réalité est linéaire)
   (func $to_linear (param $row i32) (param $col i32) (result i32)
     (i32.add (i32.mul (local.get $row) (global.get $w)) (local.get $col))
   )
-
-  (func $to_linear_second (param $row i32) (param $col i32) (result i32) 
-        (i32.add (call $to_linear (local.get $row) (local.get $col)) (global.get $total_len))
-  )
-
+    
 
   ;; Vérifie si (row, col) est dans les bornes
   (func $is_valid (param $row i32) (param $col i32) (result i32)
@@ -34,7 +40,7 @@
   ;; Lit la cellule (row, col). Renvoie 0 si hors bornes (= morte)
   (func $get_cell (param $row i32) (param $col i32) (result i32)
     (if (result i32) (call $is_valid (local.get $row) (local.get $col))
-      (then (i32.load8_u (call $to_linear (local.get $row) (local.get $col))))
+      (then (i32.load8_u (i32.add (call $to_linear (local.get $row) (local.get $col)) (global.get $turn))))
       (else (i32.const 0))
     )
 
@@ -44,24 +50,8 @@
   (func $set_cell (param $row i32) (param $col i32) (param $val i32)
     (if (call $is_valid (local.get $row) (local.get $col)) (then
       (i32.store8
-        (call $to_linear (local.get $row) (local.get $col))
-        (local.get $val)
-      )
-    ))
-  )
-
-  ;; Functions for the second board
-  (func $get_cell_second (param $row i32) (param $col i32) (result i32)
-    (if (result i32) (call $is_valid (local.get $row) (local.get $col))
-      (then (i32.load8_u (call $to_linear_second (local.get $row) (local.get $col))))
-      (else (i32.const 0))
-    )
-  )
-
-  (func $set_cell_second (param $row i32) (param $col i32) (param $val i32)
-    (if (call $is_valid (local.get $row) (local.get $col)) (then
-      (i32.store8
-        (call $to_linear_second (local.get $row) (local.get $col))
+        (i32.add (i32.sub (global.get $total_len) (global.get $turn))
+        (call $to_linear (local.get $row) (local.get $col)))
         (local.get $val)
       )
     ))
@@ -125,26 +115,6 @@
     (local.get $new)
     )
 
-   ;; Function that copy the second slot into the first slot 
-  (func $copy 
-    (local $i i32)
-    (local $j i32)
-    (loop $outer
-        (local.set $j (i32.const 0))
-        (loop $inner
-
-
-              (call $set_cell (local.get $i) (local.get $j) 
-                    (call $get_cell_second (local.get $i) (local.get $j)) )
-
-        (local.set $j (i32.add (local.get $j) (i32.const 1)))
-        (br_if $inner (i32.lt_u (local.get $j) (global.get $w))))
-    (local.set $i (i32.add (local.get $i) (i32.const 1)))
-    (br_if $outer (i32.lt_u (local.get $i) (global.get $h))))
-
-  )
-
-    
   ;;Function that iterate and create the new state of the full board in the second slot
   (func $iteration 
     (local $i i32)
@@ -154,7 +124,7 @@
 
         (loop $inner
 
-          (call $set_cell_second (local.get $i) (local.get $j) 
+          (call $set_cell (local.get $i) (local.get $j) 
               (call $next_state (local.get $i) (local.get $j))
         )
 
@@ -165,7 +135,6 @@
 
   )
 
-    ;; main loop : print (first slot) |> iteration |>copy |> print |> repeat
   (func $main_loop)
 
 
