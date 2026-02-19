@@ -1,5 +1,5 @@
 Test des fonctions de base (grille, set/get cell, bornes):
-  $ ono concrete base.wat
+  $ ono concrete game_of_life.wat
   1
   8
   9
