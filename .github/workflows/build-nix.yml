@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: nixos/nix:latest
+      image: nixos/nix:2.3.16
     steps:
       - name: test
         run: |
