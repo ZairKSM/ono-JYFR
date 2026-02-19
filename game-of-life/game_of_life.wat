@@ -9,7 +9,7 @@
   (global $h i32 (i32.const 42)) ;; height (lignes)
   (global $turn (mut i32) (i32.const 0))
 
-  (global $total_len i32 (i32.mul (global.get $w) (global.get $h))) ;; number total of cell
+  (global $total_len (mut i32) (i32.const 1764)) ;; nombre total de cell
 
 
   (memory 1) ;; 1 page = 64 Ko, 
@@ -105,37 +105,79 @@
     (local.set $nb (call $nb_neighbours (local.get $row) (local.get $col)))
     (local.set $actual_state (call $get_cell (local.get $row) (local.get $col)))
     ;; new_state = (neigh = 3) or (actual = 1 and neighbours = 2)
-    (local.set $new (i32.or 
-            (i32.eq (local.get $nb) (i32.const 3))
-            (i32.and 
-              (i32.eq (local.get $actual_state) (i32.const 1))
-              (i32.eq (local.get $nb ) (i32.const 3))
-              )))
-
-    (local.get $new)
+    (if (i32.or 
+          (i32.eq (local.get $nb) (i32.const 3))
+          (i32.and 
+            (i32.eq (local.get $actual_state) (i32.const 1))
+            (i32.eq (local.get $nb) (i32.const 2))
+          )
+        )
+      (then (local.set $new (i32.const 1)))
+      (else (local.set $new (i32.const 0)))
     )
 
-  ;;Function that iterate and create the new state of the full board in the second slot
+    (local.get $new)
+  )
+
+  ;;Function that iterate and create the new state of the full board
   (func $iteration 
     (local $i i32)
     (local $j i32)
+    (local.set $i (i32.const 0))
     (loop $outer
         (local.set $j (i32.const 0))
 
         (loop $inner
-
           (call $set_cell (local.get $i) (local.get $j) 
               (call $next_state (local.get $i) (local.get $j))
+          )
+          
+          (local.set $j (i32.add (local.get $j) (i32.const 1)))
+          (br_if $inner (i32.lt_u (local.get $j) (global.get $w)))
         )
-
+        
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $outer (i32.lt_u (local.get $i) (global.get $h)))
+    )
+  )
+  ;; Fonction d'affichage du plateau de jeu
+  (func $display_board
+    (local $i i32)
+    (local $j i32)
+    (local.set $i (i32.const 0))
+    (loop $outer
+      (local.set $j (i32.const 0))
+      (loop $inner
+        (call $print_cell (call $get_cell (local.get $i) (local.get $j)))
         (local.set $j (i32.add (local.get $j) (i32.const 1)))
-        (br_if $inner (i32.lt_u (local.get $j) (global.get $w) )))
-    (local.set $i (i32.add (local.get $i) (i32.const 1)))
-    (br_if $outer (i32.lt_u (local.get $i) (global.get $h))))
+        (br_if $inner (i32.lt_u (local.get $j) (global.get $w)))
+      )
+      (call $newline)
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $outer (i32.lt_u (local.get $i) (global.get $h)))
+    )
 
+    (call $clear_screen)
   )
 
-  (func $main_loop)
+  (func $main_loop
+    ;; Glider
+    (call $set_cell (i32.const 1) (i32.const 2) (i32.const 1))
+    (call $set_cell (i32.const 2) (i32.const 3) (i32.const 1))
+    (call $set_cell (i32.const 3) (i32.const 1) (i32.const 1))
+    (call $set_cell (i32.const 3) (i32.const 2) (i32.const 1))
+    (call $set_cell (i32.const 3) (i32.const 3) (i32.const 1))
+    
+    (call $alternate)
 
+    (loop $game
+      (call $display_board)
+      (call $iteration)
+      (call $alternate)
+      (call $sleep (i32.const 200)) 
+      (br $game)
+    )
+  )
 
+  (start $main_loop)
 )
