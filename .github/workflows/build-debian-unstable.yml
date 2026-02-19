@@ -28,6 +28,8 @@ jobs:
           set -x
 
           export HOME=/root
+          
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
           # Prepare OCaml stuff
           eval "$(opam env)"
