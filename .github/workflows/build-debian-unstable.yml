@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,23 +14,20 @@ jobs:
       image: zapashcanon/gitea-ocaml-ci:latest
       options: --user root
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache opam switch
+        uses: actions/cache@v4
+        with:
+          path: _opam
+          key: opam-${{ hashFiles('ono.opam') }}
+          restore-keys: opam-
+
       - name: test
         run: |
           set -x
 
-          # GitHub sucks
           export HOME=/root
-          cd $HOME
-
-          git clone https://github.com/${{ github.repository }}.git
-          cd $(basename ${{ github.repository }})
-
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-${{ github.event.pull_request.number }}
-            git checkout pr-${{ github.event.pull_request.number }}
-          else
-            git checkout ${{ github.ref_name }}
-          fi
 
           # Prepare OCaml stuff
           eval "$(opam env)"
