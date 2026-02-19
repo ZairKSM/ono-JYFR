@@ -12,19 +12,18 @@ jobs:
     container:
       image: nixos/nix:2.3.16
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache nix store
+        uses: actions/cache@v4
+        with:
+          path: /nix
+          key: nix-${{ hashFiles('shell.nix') }}
+          restore-keys: nix-
+
       - name: test
         run: |
           set -x
-
-          git clone https://github.com/${{ github.repository }}.git
-          cd $(basename ${{ github.repository }})
-
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-${{ github.event.pull_request.number }}
-            git checkout pr-${{ github.event.pull_request.number }}
-          else
-            git checkout ${{ github.ref_name }}
-          fi
 
           nix-shell --run "
             ODOC_WARN_ERROR=true
