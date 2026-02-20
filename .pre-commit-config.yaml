@@ -1,0 +1,23 @@
+repos:
+  - repo: local
+    hooks:
+      - id: dune-fmt
+        name: dune fmt
+        entry: bash -c 'eval $(opam env) && dune build @fmt'
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: dune-build
+        name: dune build
+        entry: bash -c 'eval $(opam env) && dune build'
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: dune-runtest
+        name: dune runtest
+        entry: bash -c 'eval $(opam env) && dune runtest'
+        language: system
+        pass_filenames: false
+        always_run: true
