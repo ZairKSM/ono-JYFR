@@ -9,3 +9,8 @@ Test des fonctions de base (grille, set/get cell, bornes):
 
 Test des primitives d'affichage (print_cell, newline, clear_screen, sleep):
   $ ono concrete primitives.wat
+  ████████
+  ████████
+  ████████
+  ████████
+  OK!
