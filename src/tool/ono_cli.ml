@@ -76,4 +76,4 @@ let source_file =
 
 let seed =
   let doc = "seed pour pouvoire test les random." in
-  Arg.(value & opt (some int) None (info ["seed"] ~doc ~docv:"SEED"))
+  Arg.(value & opt (some int) None (info [ "seed" ] ~doc ~docv:"SEED"))

@@ -8,11 +8,9 @@ let info = Cmd.info "concrete" ~exits
 let term =
   let open Term.Syntax in
   let+ () = setup_log and+ source_file = source_file and+ seed = seed in
-  
+
   (*si on l'option seed alors pas aléatoire sinon gamble 🇲🇹​🎰​*)
-  (match seed with
-  | Some s -> Random.init s
-  | None -> Random.self_init ());
+  (match seed with Some s -> Random.init s | None -> Random.self_init ());
 
   Ono.Concrete_driver.run ~source_file |> function
   | Ok () -> Ok ()
