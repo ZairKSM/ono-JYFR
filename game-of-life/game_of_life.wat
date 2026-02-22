@@ -212,8 +212,8 @@
 
   (func $main 
     ;; read w and h from input
-    ;; (global.set $w (call $read_int))
-    ;; (global.set $h (call $read_int))
+    (global.set $w (call $read_int))
+    (global.set $h (call $read_int))
     (call $main_loop)
   )
 
