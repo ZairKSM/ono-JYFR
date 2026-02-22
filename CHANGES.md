@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### [1.1.0] - 2026-??-??
 ### Added
 - Fonction `$read_int` pour pouvoir lire un entier pour la taille du plateau ([#18](https://github.com/ZairKSM/ono-JYFR/issues/18))
+- ajout des options `-w` et `-h` pour spécifier la largeur et la hauteur du plateau en ligne de commande 
 
 
 

@@ -77,3 +77,11 @@ let source_file =
 let seed =
   let doc = "seed pour pouvoire test les random." in
   Arg.(value & opt (some int) None (info [ "seed" ] ~doc ~docv:"SEED"))
+
+let width =
+  let doc = "Largeur de la grille du jeu de la vie." in
+  Arg.(value & opt (some int) None (info [ "w"; "width" ] ~doc ~docv:"WIDTH"))
+
+let height =
+  let doc = "Hauteur de la grille du jeu de la vie." in
+  Arg.(value & opt (some int) None (info [ "h"; "height" ] ~doc ~docv:"HEIGHT"))

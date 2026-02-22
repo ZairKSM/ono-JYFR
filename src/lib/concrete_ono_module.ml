@@ -47,9 +47,19 @@ let clear_screen () : (unit, _) Result.t =
   Buffer.clear text_buffer;
   Ok ()
 
+(* valeurs pré-remplies pour la hauteur et la largeur (-w, -h) *)
+let preset_values : int Queue.t = Queue.create ()
+
+let push_preset v = Queue.push v preset_values
+
 let read_int () : (Kdo.Concrete.I32.t, _) Result.t =
-  Format.printf "%!";
-  let n = Scanf.scanf " %d" Fun.id in
+  let n =
+    if not (Queue.is_empty preset_values) then Queue.pop preset_values
+    else begin
+      Format.printf "%!";
+      Scanf.scanf " %d" Fun.id
+    end
+  in
   Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int n))
 
 let m =

@@ -4,15 +4,22 @@ Test the output of the man page:
          ono-concrete
   
   SYNOPSIS
-         ono concrete [--seed=SEED] [OPTION]… FILE
+         ono concrete [--height=HEIGHT] [--seed=SEED] [--width=WIDTH] [OPTION]…
+         FILE
   
   ARGUMENTS
          FILE (required)
              Source file to analyze.
   
   OPTIONS
+         -h HEIGHT, --height=HEIGHT
+             Hauteur de la grille du jeu de la vie.
+  
          --seed=SEED
              seed pour pouvoire test les random.
+  
+         -w WIDTH, --width=WIDTH
+             Largeur de la grille du jeu de la vie.
   
   COMMON OPTIONS
          --color=WHEN (absent=auto)
