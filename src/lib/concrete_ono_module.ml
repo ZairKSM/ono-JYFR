@@ -49,7 +49,6 @@ let clear_screen () : (unit, _) Result.t =
 
 (* valeurs pré-remplies pour la hauteur et la largeur (-w, -h) *)
 let preset_values : int Queue.t = Queue.create ()
-
 let push_preset v = Queue.push v preset_values
 
 let read_int () : (Kdo.Concrete.I32.t, _) Result.t =
