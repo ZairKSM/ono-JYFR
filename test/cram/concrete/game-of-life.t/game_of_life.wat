@@ -4,9 +4,10 @@
   (func $print_cell (import "ono" "print_cell") (param i32))
   (func $newline (import "ono" "newline"))
   (func $clear_screen (import "ono" "clear_screen"))
+  (func $read_int (import "ono" "read_int") (result i32))
 
-  (global $w i32 (i32.const 42)) ;; width  (colonnes)
-  (global $h i32 (i32.const 42)) ;; height (lignes)
+  (global $w (mut i32) (i32.const 0)) ;; width  
+  (global $h (mut i32) (i32.const 0)) ;; height
 
   (memory 1) ;; 1 page = 64 Ko, 
 
@@ -63,7 +64,12 @@
     (call $print_i32 (call $get_cell (i32.const 99) (i32.const 99))) ;;  0
   )
 
-  (func $main (call $test_base))
+  (func $main 
+    ;; read w and h from input
+    (global.set $w (call $read_int))
+    (global.set $h (call $read_int))
+    (call $test_base)
+  )
 
   (start $main)
 )

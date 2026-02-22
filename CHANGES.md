@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Release History
 
+### [1.1.0] - 2026-??-??
+### Added
+- Fonction `$read_int` pour pouvoir lire un entier pour la taille du plateau ([#18](https://github.com/ZairKSM/ono-JYFR/issues/18))
+
+
+
+
 ### [1.0.0] - 2026-02-19
 ### Added
 - Fonction `$alternate` pour alterner entre les deux zones mémoire (double-buffering) afin d'éviter les effets de bord lors du calcul de l'état suivant ([#12](https://github.com/ZairKSM/ono-JYFR/issues/12))
@@ -14,12 +21,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fonction `$main_loop` : boucle principale du jeu, initialise un planeur (*glider*) et itère indéfiniment en affichant et calculant chaque génération ([#12](https://github.com/ZairKSM/ono-JYFR/issues/12))
 
 
-
-### [0.1.0] - 2025-12-16
-### Added
-- first version
-
-## Unreleased
 
 ### [0.4.0] - 2026-02-18
 ### Added
@@ -57,6 +58,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 - Erreur dans `$factorial` pour les entrées négatives, maintenant retourne 0 au lieu de causer une erreur
+
+### [0.1.0] - 2025-12-16
+### Added
+- first version
+
+## Unreleased
 
 
 
