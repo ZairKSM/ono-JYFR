@@ -14,3 +14,13 @@ Test des primitives d'affichage (print_cell, newline, clear_screen, sleep):
   ████████
   ████████
   OK!
+
+Test de l'option --steps (valeur transmise au module Wasm):
+  $ ono concrete --steps 42 steps.wat
+  42
+  OK!
+
+Sans --steps, la valeur par défaut est -1 (simulation infinie côté Wasm):
+  $ ono concrete steps.wat
+  -1
+  OK!

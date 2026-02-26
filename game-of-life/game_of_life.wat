@@ -1,5 +1,6 @@
 (module 
   (func $print_i32 (import "ono" "print_i32") (param i32))
+  (func $get_steps (import "ono" "get_steps") (result i32))
   (func $sleep (import "ono" "sleep") (param i32))
   (func $print_cell (import "ono" "print_cell") (param i32))
   (func $newline (import "ono" "newline"))
@@ -8,6 +9,8 @@
   (global $w i32 (i32.const 42)) ;; width  (colonnes)
   (global $h i32 (i32.const 42)) ;; height (lignes)
   (global $turn (mut i32) (i32.const 0))
+
+  (global $step (mut i32) (i32.const -1)) ;; step (-1 par default = infinie)
 
   (global $total_len (mut i32) (i32.const 1764)) ;; nombre total de cell
 
@@ -169,11 +172,29 @@
     (call $set_cell (i32.const 3) (i32.const 3) (i32.const 1))
     
     (call $alternate)
+    ;; set les steps
+    (global.set $step (call $get_steps))
 
     (loop $game
+      ;; si step == 0 on s'arrete
+      (if (i32.eq (global.get $step) (i32.const 0))
+        (then (return))
+      )
+
       (call $display_board)
       (call $iteration)
       (call $alternate)
+
+      ;; si step > 0 , condition pour eviter de decrementer et tomber sur -1
+      (if (i32.gt_s (global.get $step) (i32.const 0))
+        (then
+        ;; on decremente le compteur step
+          (global.set $step
+            (i32.sub (global.get $step) (i32.const 1))
+          )
+        )
+      )
+
       (call $sleep (i32.const 200)) 
       (br $game)
     )

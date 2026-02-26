@@ -3,6 +3,10 @@ type extern_func = Kdo.Concrete.Extern_func.extern_func
 (* buffer pour l'affichage *)
 let text_buffer = Buffer.create Game_constant.GameConstant.taille_buffer
 
+let steps_limit : int option ref = ref None
+
+let set_steps_limit (steps : int option) : unit = steps_limit := steps
+
 let print_i32 (n : Kdo.Concrete.I32.t) : (unit, _) Result.t =
   Logs.app (fun m -> m "%a" Kdo.Concrete.I32.pp n);
   Ok ()
@@ -14,6 +18,10 @@ let print_i64 (n : Kdo.Concrete.I64.t) : (unit, _) Result.t =
 
 let random_i32 () : (Kdo.Concrete.I32.t, _) Result.t =
   Ok (Kdo.Concrete.I32.of_int32 (Random.int32 Int32.max_int))
+
+let get_steps () : (Kdo.Concrete.I32.t, _) Result.t =
+  let steps = match !steps_limit with Some n -> n | None -> -1 in
+  Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int steps))
 
 (* atendre ms milliseconde *)
 let sleep (ms : Kdo.Concrete.I32.t) : (unit, _) Result.t =
@@ -55,6 +63,7 @@ let m =
       ("print_i32", Extern_func (i32 ^->. unit, print_i32));
       ("print_i64", Extern_func (i64 ^->. unit, print_i64));
       ("random_i32", Extern_func (unit ^->. i32, random_i32));
+      ("get_steps", Extern_func (unit ^->. i32, get_steps));
       ("sleep", Extern_func (i32 ^->. unit, sleep));
       ("print_cell", Extern_func (i32 ^->. unit, print_cell));
       ("newline", Extern_func (unit ^->. unit, newline));
