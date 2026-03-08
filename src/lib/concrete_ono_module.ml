@@ -47,6 +47,20 @@ let clear_screen () : (unit, _) Result.t =
   Buffer.clear text_buffer;
   Ok ()
 
+(* valeurs pré-remplies pour la hauteur et la largeur (-w, -h) *)
+let preset_values : int Queue.t = Queue.create ()
+let push_preset v = Queue.push v preset_values
+
+let read_int () : (Kdo.Concrete.I32.t, _) Result.t =
+  let n =
+    if not (Queue.is_empty preset_values) then Queue.pop preset_values
+    else begin
+      Format.printf "%!";
+      Scanf.scanf " %d" Fun.id
+    end
+  in
+  Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int n))
+
 let m =
   let open Kdo.Concrete.Extern_func in
   let open Kdo.Concrete.Extern_func.Syntax in
@@ -59,6 +73,7 @@ let m =
       ("print_cell", Extern_func (i32 ^->. unit, print_cell));
       ("newline", Extern_func (unit ^->. unit, newline));
       ("clear_screen", Extern_func (unit ^->. unit, clear_screen));
+      ("read_int", Extern_func (unit ^->. i32, read_int));
     ]
   in
   {
