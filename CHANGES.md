@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Release History
 
+### [1.0.1] - 2026-03-12
+### Added
+- option `--steps` qui permet de faire x tour du jeu ([#20](https://github.com/ZairKSM/ono-JYFR/issues/20))
+- option `--show_latest` qui affiche les y dernier plateau du jeu ([#20](https://github.com/ZairKSM/ono-JYFR/issues/20))
+
 ### [1.0.0] - 2026-02-19
 ### Added
 - Fonction `$alternate` pour alterner entre les deux zones mémoire (double-buffering) afin d'éviter les effets de bord lors du calcul de l'état suivant ([#12](https://github.com/ZairKSM/ono-JYFR/issues/12))
