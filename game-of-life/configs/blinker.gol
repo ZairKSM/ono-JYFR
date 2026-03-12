@@ -1,0 +1,6 @@
+# Blinker
+# Oscille entre une ligne et une colonne cycle de période 2. 
+name Blinker
+offset 10 10
+
+OOO
