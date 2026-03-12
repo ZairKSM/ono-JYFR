@@ -19,10 +19,10 @@ let term =
 
   (*si on l'option seed alors pas aléatoire sinon gamble 🇲🇹​🎰​*)
   (match seed with Some s -> Random.init s | None -> Random.self_init ());
-
   (* on pré-charge  -w et -h pour que read_int les renvoie *)
   Option.iter Ono.Concrete_ono_module.push_preset width;
   Option.iter Ono.Concrete_ono_module.push_preset height;
+
   (* on renta la monade*)
   let ( let* ) = Result.bind in
   let* () =
