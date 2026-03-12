@@ -5,9 +5,10 @@
   (func $newline (import "ono" "newline"))
   (func $clear_screen (import "ono" "clear_screen"))
   (func $is_alive_init (import "ono" "is_alive_init") (param i32) (param i32) (result i32))
+  (func $read_int (import "ono" "read_int") (result i32))
 
-  (global $w i32 (i32.const 42)) ;; width  (colonnes)
-  (global $h i32 (i32.const 42)) ;; height (lignes)
+  (global $w (mut i32) (i32.const 42)) ;; width  
+  (global $h (mut i32) (i32.const 42)) ;; height 
   (global $turn (mut i32) (i32.const 0))
 
   (global $total_len (mut i32) (i32.const 1764)) ;; nombre total de cell
@@ -193,5 +194,13 @@
     )
   )
 
-  (start $main_loop)
+  (func $main 
+    ;; read w and h from input
+    (global.set $w (call $read_int))
+    (global.set $h (call $read_int))
+    (global.set $total_len (i32.mul (global.get $w) (global.get $h)))
+    (call $main_loop)
+  )
+
+  (start $main)
 )
