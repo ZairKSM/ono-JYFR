@@ -1,0 +1,8 @@
+# Glider
+# Vaisseau qui se déplace en diagonale vers le bas à droite, en répétant un cycle de 4 générations.
+name Glider
+offset 1 1
+
+.O.
+..O
+OOO

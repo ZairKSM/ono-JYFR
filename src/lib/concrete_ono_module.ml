@@ -1,5 +1,9 @@
 type extern_func = Kdo.Concrete.Extern_func.extern_func
 
+let config : Gol_config.t ref = ref Gol_config.default_glider
+
+let set_config c = config := c
+
 (* buffer pour l'affichage *)
 let text_buffer = Buffer.create Game_constant.GameConstant.taille_buffer
 
@@ -82,6 +86,15 @@ let read_int () : (Kdo.Concrete.I32.t, _) Result.t =
     end
   in
   Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int n))
+(* Renvoie 1 si la cellule (row, col) est vivante dans la config initiale, 0 sinon *)
+let is_alive_init (row : Kdo.Concrete.I32.t) (col : Kdo.Concrete.I32.t) :
+    (Kdo.Concrete.I32.t, _) Result.t =
+  let r = Kdo.Concrete.I32.to_int row in
+  let c = Kdo.Concrete.I32.to_int col in
+  let alive =
+    List.exists (fun (pr, pc) -> pr = r && pc = c) !config.alive_cells
+  in
+  Ok (Kdo.Concrete.I32.of_int32 (if alive then 1l else 0l))
 
 let m =
   let open Kdo.Concrete.Extern_func in
@@ -98,6 +111,7 @@ let m =
       ("get_steps", Extern_func (unit ^->. i32, get_steps));
       ("get_show_latest", Extern_func (unit ^->. i32, get_show_latest));
       ("read_int", Extern_func (unit ^->. i32, read_int));
+      ("is_alive_init", Extern_func (i32 ^-> i32 ^->. i32, is_alive_init));
     ]
   in
   {

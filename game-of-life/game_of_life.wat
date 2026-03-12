@@ -7,6 +7,7 @@
   (func $clear_screen (import "ono" "clear_screen"))
   (func $get_show_latest (import "ono" "get_show_latest") (result i32))
   (func $read_int (import "ono" "read_int") (result i32))
+  (func $is_alive_init (import "ono" "is_alive_init") (param i32) (param i32) (result i32))
 
   (global $w (mut i32) (i32.const 42)) ;; width  
   (global $h (mut i32) (i32.const 42)) ;; height 
@@ -167,14 +168,27 @@
     (call $clear_screen)
   )
 
+  ;; Initialise le plateau depuis la configuration chargée par l'utilisateur
+  (func $init_board
+    (local $i i32)
+    (local $j i32)
+    (local.set $i (i32.const 0))
+    (loop $outer
+      (local.set $j (i32.const 0))
+      (loop $inner
+        (call $set_cell (local.get $i) (local.get $j)
+            (call $is_alive_init (local.get $i) (local.get $j))
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $inner (i32.lt_u (local.get $j) (global.get $w)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $outer (i32.lt_u (local.get $i) (global.get $h)))
+    )
+  )
+
   (func $main_loop
-    ;; Glider
-    (call $set_cell (i32.const 1) (i32.const 2) (i32.const 1))
-    (call $set_cell (i32.const 2) (i32.const 3) (i32.const 1))
-    (call $set_cell (i32.const 3) (i32.const 1) (i32.const 1))
-    (call $set_cell (i32.const 3) (i32.const 2) (i32.const 1))
-    (call $set_cell (i32.const 3) (i32.const 3) (i32.const 1))
-    
+    (call $init_board)
     (call $alternate)
     ;; set les steps
     (global.set $step (call $get_steps))
