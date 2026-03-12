@@ -1,15 +1,21 @@
 (module 
   (func $print_i32 (import "ono" "print_i32") (param i32))
+  (func $get_steps (import "ono" "get_steps") (result i32))
   (func $sleep (import "ono" "sleep") (param i32))
   (func $print_cell (import "ono" "print_cell") (param i32))
   (func $newline (import "ono" "newline"))
   (func $clear_screen (import "ono" "clear_screen"))
-  (func $is_alive_init (import "ono" "is_alive_init") (param i32) (param i32) (result i32))
+  (func $get_show_latest (import "ono" "get_show_latest") (result i32))
   (func $read_int (import "ono" "read_int") (result i32))
+  (func $is_alive_init (import "ono" "is_alive_init") (param i32) (param i32) (result i32))
 
   (global $w (mut i32) (i32.const 42)) ;; width  
   (global $h (mut i32) (i32.const 42)) ;; height 
   (global $turn (mut i32) (i32.const 0))
+
+  (global $step (mut i32) (i32.const -1)) ;; step (-1 par default = infinie)
+
+  (global $show_latest (mut i32) (i32.const -1))
 
   (global $total_len (mut i32) (i32.const 1764)) ;; nombre total de cell
 
@@ -184,11 +190,35 @@
   (func $main_loop
     (call $init_board)
     (call $alternate)
+    ;; set les steps
+    (global.set $step (call $get_steps))
+    ;; set show_latest
+    (global.set $show_latest (call $get_show_latest))
+
 
     (loop $game
-      (call $display_board)
+      ;; si step == 0 on s'arrete
+      (if (i32.eq (global.get $step) (i32.const 0))
+        (then (return))
+      )
+
+      ;; on affiche si le step est inferieur ou egale au show_latest
+      ;; et si on a pas mis de step
+      (if (i32.or 
+      (i32.le_u (global.get $step) (global.get $show_latest)) (i32.eq (global.get $step) (i32.const -1)))
+        (then (call $display_board))
+      )
       (call $iteration)
       (call $alternate)
+
+      ;; si step > 0 , condition pour eviter de decrementer et tomber sur -1
+      (if (i32.gt_s (global.get $step) (i32.const 0))
+        (then
+        ;; on decremente le compteur step
+          (global.set $step (i32.sub (global.get $step) (i32.const 1)))
+        )
+      )
+
       (call $sleep (i32.const 200)) 
       (br $game)
     )
