@@ -78,6 +78,15 @@ let seed =
   let doc = "seed pour pouvoire test les random." in
   Arg.(value & opt (some int) None (info [ "seed" ] ~doc ~docv:"SEED"))
 
+let config_file =
+  let doc =
+    "Fichier de configuration initiale du jeu de la vie (.gol)."
+  in
+  Arg.(
+    value
+    & opt (some existing_file_conv) None
+        (info [ "config" ] ~doc ~docv:"CONFIG"))
+
 let width =
   let doc = "Largeur de la grille du jeu de la vie." in
   Arg.(value & opt (some int) None (info [ "w"; "width" ] ~doc ~docv:"WIDTH"))

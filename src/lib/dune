@@ -4,6 +4,7 @@
   concrete_driver
   concrete_ono_module
   error
+  gol_config
   symbolic_driver
   symbolic_ono_module
   syntax)

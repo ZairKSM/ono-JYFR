@@ -4,6 +4,7 @@
   (func $print_cell (import "ono" "print_cell") (param i32))
   (func $newline (import "ono" "newline"))
   (func $clear_screen (import "ono" "clear_screen"))
+  (func $is_alive_init (import "ono" "is_alive_init") (param i32) (param i32) (result i32))
   (func $read_int (import "ono" "read_int") (result i32))
 
   (global $w (mut i32) (i32.const 42)) ;; width  
@@ -161,14 +162,27 @@
     (call $clear_screen)
   )
 
+  ;; Initialise le plateau depuis la configuration chargée par l'utilisateur
+  (func $init_board
+    (local $i i32)
+    (local $j i32)
+    (local.set $i (i32.const 0))
+    (loop $outer
+      (local.set $j (i32.const 0))
+      (loop $inner
+        (call $set_cell (local.get $i) (local.get $j)
+            (call $is_alive_init (local.get $i) (local.get $j))
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $inner (i32.lt_u (local.get $j) (global.get $w)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $outer (i32.lt_u (local.get $i) (global.get $h)))
+    )
+  )
+
   (func $main_loop
-    ;; Glider
-    (call $set_cell (i32.const 1) (i32.const 2) (i32.const 1))
-    (call $set_cell (i32.const 2) (i32.const 3) (i32.const 1))
-    (call $set_cell (i32.const 3) (i32.const 1) (i32.const 1))
-    (call $set_cell (i32.const 3) (i32.const 2) (i32.const 1))
-    (call $set_cell (i32.const 3) (i32.const 3) (i32.const 1))
-    
+    (call $init_board)
     (call $alternate)
 
     (loop $game
@@ -184,6 +198,7 @@
     ;; read w and h from input
     (global.set $w (call $read_int))
     (global.set $h (call $read_int))
+    (global.set $total_len (i32.mul (global.get $w) (global.get $h)))
     (call $main_loop)
   )
 
