@@ -23,10 +23,6 @@ let term =
   Option.iter Ono.Concrete_ono_module.push_preset width;
   Option.iter Ono.Concrete_ono_module.push_preset height;
 
-  (* on pré-charge  -w et -h pour que read_int les renvoie *)
-  Option.iter Ono.Concrete_ono_module.push_preset width;
-  Option.iter Ono.Concrete_ono_module.push_preset height;
-
   Ono.Concrete_driver.run ~source_file ?config_file () |> function
   | Ok () -> Ok ()
   | Error e -> Error (`Msg (Kdo.R.err_to_string e))
