@@ -228,6 +228,7 @@
     ;; read w and h from input
     (global.set $w (call $read_int))
     (global.set $h (call $read_int))
+    (global.set $total_len (i32.mul (global.get $w) (global.get $h)))
     (call $main_loop)
   )
 

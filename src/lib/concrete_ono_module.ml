@@ -73,6 +73,7 @@ let clear_screen () : (unit, _) Result.t =
     Buffer.add_char text_buffer '\n';
   Ok ()
 
+
 (* valeurs pré-remplies pour la hauteur et la largeur (-w, -h) *)
 let preset_values : int Queue.t = Queue.create ()
 let push_preset v = Queue.push v preset_values
@@ -110,8 +111,8 @@ let m =
       ("clear_screen", Extern_func (unit ^->. unit, clear_screen));
       ("get_steps", Extern_func (unit ^->. i32, get_steps));
       ("get_show_latest", Extern_func (unit ^->. i32, get_show_latest));
-      ("read_int", Extern_func (unit ^->. i32, read_int));
       ("is_alive_init", Extern_func (i32 ^-> i32 ^->. i32, is_alive_init));
+      ("read_int", Extern_func (unit ^->. i32, read_int));
     ]
   in
   {
