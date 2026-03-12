@@ -5,12 +5,15 @@
   (func $print_cell (import "ono" "print_cell") (param i32))
   (func $newline (import "ono" "newline"))
   (func $clear_screen (import "ono" "clear_screen"))
+  (func $get_show_latest (import "ono" "get_show_latest") (result i32))
 
   (global $w i32 (i32.const 42)) ;; width  (colonnes)
   (global $h i32 (i32.const 42)) ;; height (lignes)
   (global $turn (mut i32) (i32.const 0))
 
   (global $step (mut i32) (i32.const -1)) ;; step (-1 par default = infinie)
+
+  (global $show_latest (mut i32) (i32.const -1))
 
   (global $total_len (mut i32) (i32.const 1764)) ;; nombre total de cell
 
@@ -174,6 +177,9 @@
     (call $alternate)
     ;; set les steps
     (global.set $step (call $get_steps))
+    ;; set show_latest
+    (global.set $show_latest (call $get_show_latest))
+
 
     (loop $game
       ;; si step == 0 on s'arrete
@@ -181,7 +187,12 @@
         (then (return))
       )
 
-      (call $display_board)
+      ;; on affiche si le step est inferieur ou egale au show_latest
+      ;; et si on a pas mis de step
+      (if (i32.or 
+      (i32.le_u (global.get $step) (global.get $show_latest)) (i32.eq (global.get $step) (i32.const -1)))
+        (then (call $display_board))
+      )
       (call $iteration)
       (call $alternate)
 
@@ -189,9 +200,7 @@
       (if (i32.gt_s (global.get $step) (i32.const 0))
         (then
         ;; on decremente le compteur step
-          (global.set $step
-            (i32.sub (global.get $step) (i32.const 1))
-          )
+          (global.set $step (i32.sub (global.get $step) (i32.const 1)))
         )
       )
 
