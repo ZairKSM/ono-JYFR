@@ -1,0 +1,18 @@
+# Pulsar
+# Oscillateur de période 3 le plus commun, avec une belle symétrie rotationnelle.
+name Pulsar
+offset 10 10
+
+..OOO...OOO..
+.............
+O....O.O....O
+O....O.O....O
+O....O.O....O
+..OOO...OOO..
+.............
+..OOO...OOO..
+O....O.O....O
+O....O.O....O
+O....O.O....O
+.............
+..OOO...OOO..

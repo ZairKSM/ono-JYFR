@@ -1,2 +1,4 @@
 (cram
- (deps %{bin:ono}))
+ (deps
+  %{bin:ono}
+  (source_tree ../../../game-of-life/configs)))

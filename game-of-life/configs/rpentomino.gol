@@ -1,0 +1,9 @@
+# R-pentomino
+# Methuselah célèbre qui évolue pendant 1103 générations avant de se stabiliser.
+# Produit des gliders, des objets stables et des oscillateurs.
+name R-pentomino
+offset 15 15
+
+.OO
+OO.
+.O.
