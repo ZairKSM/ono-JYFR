@@ -16,15 +16,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache opam switch
-        uses: actions/cache@v4
+      - name: Restore opam switch cache
+        id: opam-cache
+        uses: actions/cache/restore@v4
         with:
           path: _opam
           key: ${{ runner.os }}-opam-${{ hashFiles('dune-project', 'ono.opam', 'vendor/owi/dune-project', 'vendor/owi/owi.opam') }}
           restore-keys: |
             ${{ runner.os }}-opam-
 
-      - name: test
+      - name: Prepare dependencies
         run: |
           set -x
 
@@ -47,6 +48,19 @@ jobs:
           # Install system and opam-repo dependencies
           opam install . --with-test --with-dev-setup --with-doc --deps-only
 
-          # Build and test
+      - name: Save opam switch cache
+        if: ${{ steps.opam-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v4
+        with:
+          path: _opam
+          key: ${{ runner.os }}-opam-${{ hashFiles('dune-project', 'ono.opam', 'vendor/owi/dune-project', 'vendor/owi/owi.opam') }}
+
+      - name: Build and test
+        run: |
+          set -x
+
+          export HOME=/root
+          eval "$(opam env --switch=. --set-switch)"
+
           dune build @install
           dune runtest
