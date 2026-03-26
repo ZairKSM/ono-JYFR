@@ -27,7 +27,7 @@ jobs:
 
       - name: Prepare dependencies
         run: |
-          set -x
+          set -euxo pipefail
 
           export HOME=/root
           
@@ -36,14 +36,16 @@ jobs:
           # Prepare OCaml stuff
           export OPAMCONFIRMLEVEL=unsafe-yes
           export OPAMYES=1
+
+          apt-get update
+          apt-get install -y --no-install-recommends libgmp-dev pkg-config python3
+
           opam update
 
           if [ ! -d "_opam" ]; then
             opam switch create . --deps-only
           fi
           eval "$(opam env --switch=. --set-switch)"
-
-          apt update
 
           # Install system and opam-repo dependencies
           opam install . --with-test --with-dev-setup --with-doc --deps-only
