@@ -4,19 +4,27 @@ Test the output of the man page:
          ono-concrete
   
   SYNOPSIS
-         ono concrete [--height=HEIGHT] [--seed=SEED] [--width=WIDTH] [OPTION]…
-         FILE
+         ono concrete [OPTION]… FILE
   
   ARGUMENTS
          FILE (required)
              Source file to analyze.
   
   OPTIONS
+         --config=CONFIG
+             Fichier de configuration initiale du jeu de la vie (.gol).
+  
          -h HEIGHT, --height=HEIGHT
              Hauteur de la grille du jeu de la vie.
   
          --seed=SEED
              seed pour pouvoire test les random.
+  
+         --show_latest=SHOW_LATEST
+             affiche les n dernière configuration.
+  
+         --steps=STEPS
+             Nombre d'étapes a simuler (infini par defaut).
   
          -w WIDTH, --width=WIDTH
              Largeur de la grille du jeu de la vie.

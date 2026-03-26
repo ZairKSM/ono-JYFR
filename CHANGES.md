@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Release History
 
+### [1.1.2] - 2026-03-3
+### Added
+- nouvelles configurations initiales du jeu de la vie dans `game-of-life/configs/` : `beacon`, `lwss`, `pulsar`, `pentadecathlon`, `rpentomino`, `acorn` et `diehard` ([#21](https://github.com/ZairKSM/ono-JYFR/issues/21))
+- nouveaux cram tests pour valider le chargement des configurations `.gol` et le comportement des patterns avec `--config`, `--steps`, `--show_latest`, `-w` et `-h` ([#21](https://github.com/ZairKSM/ono-JYFR/issues/21))
+
+
 ### [1.1.1] - 2026-03-12
 ### Added
 - option `--steps` qui permet de faire x tour du jeu ([#20](https://github.com/ZairKSM/ono-JYFR/issues/20))
@@ -68,6 +74,3 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - first version
 
 ## Unreleased
-
-
-
