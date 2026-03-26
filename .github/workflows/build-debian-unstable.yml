@@ -20,8 +20,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: _opam
-          key: opam-${{ hashFiles('ono.opam') }}
-          restore-keys: opam-
+          key: ${{ runner.os }}-opam-${{ hashFiles('dune-project', 'ono.opam', 'vendor/owi/dune-project', 'vendor/owi/owi.opam') }}
+          restore-keys: |
+            ${{ runner.os }}-opam-
 
       - name: test
         run: |
@@ -32,9 +33,15 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
           # Prepare OCaml stuff
-          eval "$(opam env)"
           export OPAMCONFIRMLEVEL=unsafe-yes
+          export OPAMYES=1
           opam update
+
+          if [ ! -d "_opam" ]; then
+            opam switch create . --deps-only
+          fi
+          eval "$(opam env --switch=. --set-switch)"
+
           apt update
 
           # Install system and opam-repo dependencies
