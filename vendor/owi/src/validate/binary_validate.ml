@@ -479,14 +479,14 @@ let rec typecheck_instr (env : Env.t) (stack : stack) (instr : instr Annotated.t
   | Select t ->
     let* stack = Stack.pop [ i32 ] stack in
     begin match t with
-    | None -> begin
-      match stack with
+    | None ->
+      begin match stack with
       | Ref_type _ :: _tl -> Error (`Type_mismatch "select implicit")
       | Any :: _ -> Ok [ Something; Any ]
       | hd :: Any :: _ -> ok @@ (hd :: [ Any ])
       | hd :: hd' :: tl when Stack.match_types hd hd' -> ok @@ (hd :: tl)
       | _ -> Error (`Type_mismatch "select")
-    end
+      end
     | Some t ->
       let t = List.map typ_of_val_type t in
       let* stack = Stack.pop t stack in

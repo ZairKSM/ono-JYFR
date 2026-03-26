@@ -387,14 +387,14 @@ let read_block_type types input =
   | Ok (i, input) when Int64.ge i 0L ->
     let block_type = block_type_of_type_def types.(Int64.to_int i) in
     Ok (block_type, input)
-  | Error _ | Ok _ -> begin
-    match read_byte ~msg:"read_block_type" input with
+  | Error _ | Ok _ ->
+    begin match read_byte ~msg:"read_block_type" input with
     | Ok ('\x40', input) -> Ok (Bt_raw (None, ([], [])), input)
     | Error _ | Ok _ ->
       let* vt, input = read_valtype input in
       let pt, rt = ([], [ vt ]) in
       Ok (Bt_raw (None, (pt, rt)), input)
-  end
+    end
 
 let rec read_instr types input =
   let* b, input = read_byte ~msg:"read_instr" input in

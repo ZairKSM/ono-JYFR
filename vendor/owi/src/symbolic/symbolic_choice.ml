@@ -156,13 +156,13 @@ let get_model_or_stop symbol =
   in
   match sat_model with
   | `Unsat -> stop
-  | `Model model -> begin
-    match Smtml.Model.evaluate model symbol with
+  | `Model model ->
+    begin match Smtml.Model.evaluate model symbol with
     | Some v -> return v
     | None ->
       (* the model exists so the symbol should evaluate *)
       assert false
-  end
+    end
   | `Unknown ->
     (* It can happen when the solver is interrupted *)
     (* TODO: once https://github.com/formalsec/smtml/pull/479 is merged

@@ -1,19 +1,13 @@
 type extern_func = Kdo.Concrete.Extern_func.extern_func
 
 let config : Gol_config.t ref = ref Gol_config.default_glider
-
 let set_config c = config := c
 
 (* buffer pour l'affichage *)
 let text_buffer = Buffer.create Game_constant.GameConstant.taille_buffer
-
-
 let steps_limit : int option ref = ref None
-
 let show_latest_number : int option ref = ref None
-
 let set_steps_limit (steps : int option) : unit = steps_limit := steps
-
 let set_show_latest_number (num : int option) : unit = show_latest_number := num
 
 let print_i32 (n : Kdo.Concrete.I32.t) : (unit, _) Result.t =
@@ -67,12 +61,9 @@ let newline () : (unit, _) Result.t =
 let clear_screen () : (unit, _) Result.t =
   let contents = Buffer.contents text_buffer in
   Format.printf "\027[2J\027[H%s%!" contents;
-  if !show_latest_number == None then
-    (Buffer.clear text_buffer;)
-  else 
-    Buffer.add_char text_buffer '\n';
+  if !show_latest_number == None then Buffer.clear text_buffer
+  else Buffer.add_char text_buffer '\n';
   Ok ()
-
 
 (* valeurs pré-remplies pour la hauteur et la largeur (-w, -h) *)
 let preset_values : int Queue.t = Queue.create ()
@@ -87,6 +78,7 @@ let read_int () : (Kdo.Concrete.I32.t, _) Result.t =
     end
   in
   Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int n))
+
 (* Renvoie 1 si la cellule (row, col) est vivante dans la config initiale, 0 sinon *)
 let is_alive_init (row : Kdo.Concrete.I32.t) (col : Kdo.Concrete.I32.t) :
     (Kdo.Concrete.I32.t, _) Result.t =

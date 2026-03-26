@@ -8,9 +8,7 @@ let info = Cmd.info "concrete" ~exits
 let term =
   let open Term.Syntax in
   let+ () = setup_log
- 
   and+ source_file = source_file
- 
   and+ seed = seed
   and+ width = width
   and+ height = height
@@ -35,7 +33,8 @@ let term =
   let* () =
     match show_latest with
     | Some n when n <= 0 -> Error (`Msg "-show_latest doit etre > 0")
-    | Some _ when steps = None -> Error (`Msg "--show_latest doit être appelé avec --steps")
+    | Some _ when steps = None ->
+        Error (`Msg "--show_latest doit être appelé avec --steps")
     | _ -> Ok ()
   in
   Ono.Concrete_ono_module.set_show_latest_number show_latest;

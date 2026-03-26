@@ -7,10 +7,10 @@ let run ~source_file ?config_file () =
     match config_file with
     | None -> Ok ()
     | Some path ->
-      Logs.info (fun m -> m "Loading config %a..." Fpath.pp path);
-      let* cfg = Gol_config.parse_file path in
-      Concrete_ono_module.set_config cfg;
-      Ok ()
+        Logs.info (fun m -> m "Loading config %a..." Fpath.pp path);
+        let* cfg = Gol_config.parse_file path in
+        Concrete_ono_module.set_config cfg;
+        Ok ()
   in
   (* Parsing. *)
   Logs.info (fun m -> m "Parsing file %a..." Fpath.pp source_file);

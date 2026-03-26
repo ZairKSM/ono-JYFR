@@ -84,7 +84,9 @@ let steps =
 
 let show_latest =
   let doc = "affiche les n dernière configuration." in
-  Arg.(value & opt (some int) None (info [ "show_latest" ] ~doc ~docv:"SHOW_LATEST"))
+  Arg.(
+    value
+    & opt (some int) None (info [ "show_latest" ] ~doc ~docv:"SHOW_LATEST"))
 
 let width =
   let doc = "Largeur de la grille du jeu de la vie." in
@@ -93,11 +95,9 @@ let width =
 let height =
   let doc = "Hauteur de la grille du jeu de la vie." in
   Arg.(value & opt (some int) None (info [ "h"; "height" ] ~doc ~docv:"HEIGHT"))
+
 let config_file =
-  let doc =
-    "Fichier de configuration initiale du jeu de la vie (.gol)."
-  in
+  let doc = "Fichier de configuration initiale du jeu de la vie (.gol)." in
   Arg.(
     value
-    & opt (some existing_file_conv) None
-        (info [ "config" ] ~doc ~docv:"CONFIG"))
+    & opt (some existing_file_conv) None (info [ "config" ] ~doc ~docv:"CONFIG"))
