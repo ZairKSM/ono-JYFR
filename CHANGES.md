@@ -7,6 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Release History
 
+### [1.2.0] - 2026-03-27
+### Added
+- extension textuelle complète pour le jeu de la vie: lecture des dimensions via `read_int` et options `-w`/`-h` ([#18](https://github.com/ZairKSM/ono-JYFR/issues/18))
+- contrôle de simulation en ligne de commande avec `--steps` et filtrage d'affichage avec `--show_latest` ([#20](https://github.com/ZairKSM/ono-JYFR/issues/20))
+- support des configurations initiales `.gol` via `--config`, ajout d'un jeu de patterns et crams tests associés ([#19](https://github.com/ZairKSM/ono-JYFR/issues/19), [#21](https://github.com/ZairKSM/ono-JYFR/issues/21))
+
+### Changed
+- alignement du formatage OCaml sur `ocamlformat 0.29.0` et ajout de la dépendance de dev correspondante dans les métadonnées opam
+
+### Fixed
+- stabilisation CI/CD Debian unstable: restauration/sauvegarde fiable du cache `_opam` et correction de l'ordre `apt-get update` avant création de switch opam pour éviter les erreurs ([#17](https://github.com/ZairKSM/ono-JYFR/issues/17), [#25](https://github.com/ZairKSM/ono-JYFR/issues/25))
+
 ### [1.1.2] - 2026-03-3
 ### Added
 - nouvelles configurations initiales du jeu de la vie dans `game-of-life/configs/` : `beacon`, `lwss`, `pulsar`, `pentadecathlon`, `rpentomino`, `acorn` et `diehard` ([#21](https://github.com/ZairKSM/ono-JYFR/issues/21))
