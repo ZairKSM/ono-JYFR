@@ -14,7 +14,8 @@ let term =
   and+ height = height
   and+ steps = steps
   and+ show_latest = show_latest
-  and+ config_file = config_file in
+  and+ config_file = config_file
+  and+ graphics = graphics in
 
   (*si on l'option seed alors pas aléatoire sinon gamble 🇲🇹​🎰​*)
   (match seed with Some s -> Random.init s | None -> Random.self_init ());
@@ -38,6 +39,7 @@ let term =
     | _ -> Ok ()
   in
   Ono.Concrete_ono_module.set_show_latest_number show_latest;
+  Ono.Concrete_ono_module.set_render_mode graphics;
   Ono.Concrete_driver.run ~source_file ?config_file () |> function
   | Ok () -> Ok ()
   | Error e -> Error (`Msg (Kdo.R.err_to_string e))

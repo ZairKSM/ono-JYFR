@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Release History
 
+### [1.2.1] - 2026-03-27
+### Added
+- Mise en place initiale de l'interface graphique via l'option `--use-graphical-window` avec `Raylib`.
+
 ### [1.2.0] - 2026-03-27
 ### Added
 - extension textuelle complète pour le jeu de la vie: lecture des dimensions via `read_int` et options `-w`/`-h` ([#18](https://github.com/ZairKSM/ono-JYFR/issues/18))
