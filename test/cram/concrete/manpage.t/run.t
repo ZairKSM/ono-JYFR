@@ -26,6 +26,9 @@ Test the output of the man page:
          --steps=STEPS
              Nombre d'étapes a simuler (infini par defaut).
   
+         --use-graphical-window
+             Active le rendu graphique via une fenetre Raylib.
+  
          -w WIDTH, --width=WIDTH
              Largeur de la grille du jeu de la vie.
   

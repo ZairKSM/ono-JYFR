@@ -8,6 +8,6 @@
   symbolic_driver
   symbolic_ono_module
   syntax)
- (libraries fpath kdo logs game_constant)
+ (libraries fpath kdo logs game_constant raylib)
  (instrumentation
   (backend bisect_ppx)))

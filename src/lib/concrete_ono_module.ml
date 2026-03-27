@@ -7,16 +7,34 @@ let set_config c = config := c
 let text_buffer = Buffer.create Game_constant.GameConstant.taille_buffer
 let steps_limit : int option ref = ref None
 let show_latest_number : int option ref = ref None
+let graphics_mode : bool ref = ref false
+let window_initialized : bool ref = ref false
 let set_steps_limit (steps : int option) : unit = steps_limit := steps
 let set_show_latest_number (num : int option) : unit = show_latest_number := num
+let set_render_mode (enabled : bool) : unit = graphics_mode := enabled
+
+let ensure_window ~width ~height : unit =
+  if !graphics_mode && not !window_initialized then begin
+    Raylib.init_window width height "Jeu de la vie";
+    Raylib.set_target_fps 60;
+    window_initialized := true
+  end
+
+let close_window_if_needed () : unit =
+  if !window_initialized then begin
+    Raylib.close_window ();
+    window_initialized := false
+  end
+
+let () = at_exit close_window_if_needed
 
 let print_i32 (n : Kdo.Concrete.I32.t) : (unit, _) Result.t =
-  Logs.app (fun m -> m "%a" Kdo.Concrete.I32.pp n);
+  if not !graphics_mode then Logs.app (fun m -> m "%a" Kdo.Concrete.I32.pp n);
   Ok ()
 
 (* j'ai juste copier coller et ajouter dans "let functions = ...." *)
 let print_i64 (n : Kdo.Concrete.I64.t) : (unit, _) Result.t =
-  Logs.app (fun m -> m "%a" Kdo.Concrete.I64.pp n);
+  if not !graphics_mode then Logs.app (fun m -> m "%a" Kdo.Concrete.I64.pp n);
   Ok ()
 
 let random_i32 () : (Kdo.Concrete.I32.t, _) Result.t =
@@ -60,9 +78,50 @@ let newline () : (unit, _) Result.t =
 *)
 let clear_screen () : (unit, _) Result.t =
   let contents = Buffer.contents text_buffer in
-  Format.printf "\027[2J\027[H%s%!" contents;
+  if !graphics_mode then begin
+    ensure_window ~width:900 ~height:600;
+    if !window_initialized && not (Raylib.window_should_close ()) then begin
+      let open Raylib in
+      begin_drawing ();
+      clear_background Color.black;
+      (* TODO: Dessiner le plateau fair une fonction *)
+      end_drawing ()
+    end
+    else if !window_initialized then begin
+      close_window_if_needed ();
+      exit 0
+    end
+  end
+  else Format.printf "\027[2J\027[H%s%!" contents;
   if !show_latest_number == None then Buffer.clear text_buffer
   else Buffer.add_char text_buffer '\n';
+  Ok ()
+
+let window_init (width : Kdo.Concrete.I32.t) (height : Kdo.Concrete.I32.t) :
+    (unit, _) Result.t =
+  if !graphics_mode then begin
+    let w = Kdo.Concrete.I32.to_int width in
+    let h = Kdo.Concrete.I32.to_int height in
+    ensure_window ~width:w ~height:h
+  end;
+  Ok ()
+
+let window_clear (_color : Kdo.Concrete.I32.t) : (unit, _) Result.t =
+  if !graphics_mode then begin
+    ensure_window ~width:900 ~height:600;
+    if !window_initialized && not (Raylib.window_should_close ()) then begin
+      Raylib.begin_drawing ();
+      Raylib.clear_background Raylib.Color.black
+    end
+  end;
+  Ok ()
+
+let window_present () : (unit, _) Result.t =
+  if !graphics_mode then
+    begin if !window_initialized && not (Raylib.window_should_close ()) then
+      Raylib.end_drawing ()
+    else close_window_if_needed ()
+    end;
   Ok ()
 
 (* valeurs pré-remplies pour la hauteur et la largeur (-w, -h) *)
@@ -105,6 +164,9 @@ let m =
       ("get_show_latest", Extern_func (unit ^->. i32, get_show_latest));
       ("is_alive_init", Extern_func (i32 ^-> i32 ^->. i32, is_alive_init));
       ("read_int", Extern_func (unit ^->. i32, read_int));
+      ("window_init", Extern_func (i32 ^-> i32 ^->. unit, window_init));
+      ("window_clear", Extern_func (i32 ^->. unit, window_clear));
+      ("window_present", Extern_func (unit ^->. unit, window_present));
     ]
   in
   {

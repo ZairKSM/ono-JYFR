@@ -101,3 +101,7 @@ let config_file =
   Arg.(
     value
     & opt (some existing_file_conv) None (info [ "config" ] ~doc ~docv:"CONFIG"))
+
+let graphics =
+  let doc = "Active le rendu graphique via une fenetre Raylib." in
+  Arg.(value & flag (info [ "use-graphical-window" ] ~doc))
