@@ -1,0 +1,9 @@
+# LWSS (Lightweight Spaceship)
+# Premier vaisseau orthogonal découvert, se déplace horizontalement avec une période de 4.
+name LWSS
+offset 5 5
+
+.O..O
+O....
+O...O
+OOOO.

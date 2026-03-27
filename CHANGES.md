@@ -7,6 +7,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Release History
 
+### [1.2.0] - 2026-03-27
+### Added
+- extension textuelle complète pour le jeu de la vie: lecture des dimensions via `read_int` et options `-w`/`-h` ([#18](https://github.com/ZairKSM/ono-JYFR/issues/18))
+- contrôle de simulation en ligne de commande avec `--steps` et filtrage d'affichage avec `--show_latest` ([#20](https://github.com/ZairKSM/ono-JYFR/issues/20))
+- support des configurations initiales `.gol` via `--config`, ajout d'un jeu de patterns et crams tests associés ([#19](https://github.com/ZairKSM/ono-JYFR/issues/19), [#21](https://github.com/ZairKSM/ono-JYFR/issues/21))
+
+### Changed
+- alignement du formatage OCaml sur `ocamlformat 0.29.0` et ajout de la dépendance de dev correspondante dans les métadonnées opam
+
+### Fixed
+- stabilisation CI/CD Debian unstable: restauration/sauvegarde fiable du cache `_opam` et correction de l'ordre `apt-get update` avant création de switch opam pour éviter les erreurs ([#17](https://github.com/ZairKSM/ono-JYFR/issues/17), [#25](https://github.com/ZairKSM/ono-JYFR/issues/25))
+
+### [1.1.2] - 2026-03-3
+### Added
+- nouvelles configurations initiales du jeu de la vie dans `game-of-life/configs/` : `beacon`, `lwss`, `pulsar`, `pentadecathlon`, `rpentomino`, `acorn` et `diehard` ([#21](https://github.com/ZairKSM/ono-JYFR/issues/21))
+- nouveaux cram tests pour valider le chargement des configurations `.gol` et le comportement des patterns avec `--config`, `--steps`, `--show_latest`, `-w` et `-h` ([#21](https://github.com/ZairKSM/ono-JYFR/issues/21))
+
+
+### [1.1.1] - 2026-03-12
+### Added
+- option `--steps` qui permet de faire x tour du jeu ([#20](https://github.com/ZairKSM/ono-JYFR/issues/20))
+- option `--show_latest` qui affiche les y dernier plateau du jeu ([#20](https://github.com/ZairKSM/ono-JYFR/issues/20))
+
+### [1.1.0] - 2026-??-??
+### Added
+- Fonction `$read_int` pour pouvoir lire un entier pour la taille du plateau ([#18](https://github.com/ZairKSM/ono-JYFR/issues/18))
+- ajout des options `-w` et `-h` pour spécifier la largeur et la hauteur du plateau en ligne de commande 
+
+
 ### [1.0.0] - 2026-02-19
 ### Added
 - Fonction `$alternate` pour alterner entre les deux zones mémoire (double-buffering) afin d'éviter les effets de bord lors du calcul de l'état suivant ([#12](https://github.com/ZairKSM/ono-JYFR/issues/12))
@@ -14,12 +43,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fonction `$main_loop` : boucle principale du jeu, initialise un planeur (*glider*) et itère indéfiniment en affichant et calculant chaque génération ([#12](https://github.com/ZairKSM/ono-JYFR/issues/12))
 
 
-
-### [0.1.0] - 2025-12-16
-### Added
-- first version
-
-## Unreleased
 
 ### [0.4.0] - 2026-02-18
 ### Added
@@ -58,5 +81,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 - Erreur dans `$factorial` pour les entrées négatives, maintenant retourne 0 au lieu de causer une erreur
 
+### [0.1.0] - 2025-12-16
+### Added
+- first version
 
-
+## Unreleased

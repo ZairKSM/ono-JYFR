@@ -53,11 +53,11 @@ let check_error_result expected = function
 
 let load_module ls mod_id =
   match mod_id with
-  | None -> begin
-    match Link.State.get_last ls with
+  | None ->
+    begin match Link.State.get_last ls with
     | None -> Error `Unbound_last_module
     | Some m -> Ok m
-  end
+    end
   | Some mod_id -> (
     match Link.State.get_by_id ls mod_id with
     | None -> Error (`Unbound_module mod_id)
@@ -86,11 +86,11 @@ let compare_result_const result (const : Concrete_value.t) =
   | Result_const (Literal (Const_V128 n)), V128 n' -> Concrete_v128.eq n n'
   | Result_const (Literal (Const_null Func_ht)), Ref (Func None) -> true
   | Result_const (Literal (Const_null Extern_ht)), Ref (Extern None) -> true
-  | Result_const (Literal (Const_extern n)), Ref (Extern (Some ref)) -> begin
-    match Concrete_ref.Extern.cast ref Host_externref.ty with
+  | Result_const (Literal (Const_extern n)), Ref (Extern (Some ref)) ->
+    begin match Concrete_ref.Extern.cast ref Host_externref.ty with
     | None -> false
     | Some n' -> n = n'
-  end
+    end
   | Result_const (Nan_canon S32), F32 f ->
     Float32.is_pos_nan f || Float32.is_neg_nan f
   | Result_const (Nan_canon S64), F64 f ->
@@ -139,7 +139,7 @@ let action (link_state : Concrete_extern_func.extern_func Link.State.t) =
     let envs = Link.State.get_envs link_state in
     let module I = Interpret.Concrete (Interpret.Default_parameters) in
     I.exec_vfunc_from_outside ~locals:stack ~env:env_id ~envs f
-  end
+    end
   | Get (mod_id, name) ->
     Log.info (fun m -> m "get...");
     let+ global = load_global_from_module link_state mod_id name in
@@ -223,13 +223,13 @@ let run ~no_exhaustion script =
         let+ () =
           match got with
           | Error got -> check_error ~expected ~got
-          | Ok m -> begin
-            match Binary_validate.modul m with
+          | Ok m ->
+            begin match Binary_validate.modul m with
             | Error got -> check_error ~expected ~got
             | Ok () ->
               let got = Link.Binary.modul link_state ~name:None m in
               check_error_result expected got
-          end
+            end
         in
         link_state
       | Assert (Assert_invalid (m, expected)) ->

@@ -64,8 +64,8 @@ let modul m =
           else if env.declared_memory then Error `Import_after_memory
           else if env.tables then Error `Import_after_table
           else if env.globals then Error `Import_after_global
-          else begin
-            match i.typ with
+          else
+            begin match i.typ with
             | Mem (id, _) ->
               let* () = add_memory id in
               Ok env
@@ -76,7 +76,7 @@ let modul m =
             | Table (id, _) ->
               let+ () = add_table id in
               env
-          end
+            end
         | Data _d -> Ok env
         | Elem _e -> Ok env
         | Mem (id, _) ->

@@ -209,7 +209,7 @@ struct
             in
             Choice.return @@ div n1 n2
           | U -> Choice.return @@ unsigned_div n1 n2
-        end
+          end
         | Rem s -> begin
           let>! () =
             (eqz n2, `Integer_divide_by_zero, (* TODO: get instr counter *) None)
@@ -217,7 +217,7 @@ struct
           match s with
           | S -> Choice.return @@ rem n1 n2
           | U -> Choice.return @@ unsigned_rem n1 n2
-        end
+          end
         | And -> Choice.return @@ logand n1 n2
         | Or -> Choice.return @@ logor n1 n2
         | Xor -> Choice.return @@ logxor n1 n2
@@ -250,7 +250,7 @@ struct
             in
             Choice.return @@ div n1 n2
           | U -> Choice.return @@ unsigned_div n1 n2
-        end
+          end
         | Rem s -> begin
           let>! () =
             (eqz n2, `Integer_divide_by_zero, (* TODO: get instr counter *) None)
@@ -258,7 +258,7 @@ struct
           match s with
           | S -> Choice.return @@ rem n1 n2
           | U -> Choice.return @@ unsigned_rem n1 n2
-        end
+          end
         | And -> Choice.return @@ logand n1 n2
         | Or -> Choice.return @@ logor n1 n2
         | Xor -> Choice.return @@ logxor n1 n2
@@ -311,7 +311,7 @@ struct
         let c = op c1 c2 in
         let d = op d1 d2 in
         V128.of_i32x4 a b c d
-      end
+        end
       | I64x2 -> begin
         let a1, b1 = V128.to_i64x2 f1 in
         let a2, b2 = V128.to_i64x2 f2 in
@@ -319,7 +319,7 @@ struct
         let a = op a1 a2 in
         let b = op b1 b2 in
         V128.of_i64x2 a b
-      end
+        end
     in
     Stack.push_v128 stack v
 
@@ -441,8 +441,8 @@ struct
 
   let exec_itruncsatf stack nn nn' sx =
     match nn with
-    | Text.S32 -> begin
-      match nn' with
+    | Text.S32 ->
+      begin match nn' with
       | Text.S32 ->
         let n, stack = Stack.pop_f32 stack in
         let n =
@@ -459,9 +459,9 @@ struct
           | U -> I32.trunc_sat_f64_u n
         in
         Stack.push_i32 stack n
-    end
-    | S64 -> begin
-      match nn' with
+      end
+    | S64 ->
+      begin match nn' with
       | S32 ->
         let n, stack = Stack.pop_f32 stack in
         let n =
@@ -478,7 +478,7 @@ struct
           | U -> I64.trunc_sat_f64_u n
         in
         Stack.push_i64 stack n
-    end
+      end
 
   let exec_fconverti stack nn nn' sx =
     let is_signed = match sx with Text.S -> true | U -> false in
@@ -508,8 +508,8 @@ struct
 
   let exec_ireinterpretf stack nn nn' =
     match nn with
-    | Text.S32 -> begin
-      match nn' with
+    | Text.S32 ->
+      begin match nn' with
       | Text.S32 ->
         let n, stack = Stack.pop_f32 stack in
         let n = I32.reinterpret_f32 n in
@@ -518,9 +518,9 @@ struct
         let n, stack = Stack.pop_f64 stack in
         let n = I32.reinterpret_f32 (F32.demote_f64 n) in
         Stack.push_i32 stack n
-    end
-    | S64 -> begin
-      match nn' with
+      end
+    | S64 ->
+      begin match nn' with
       | S32 ->
         let n, stack = Stack.pop_f32 stack in
         let n = I64.reinterpret_f64 (F64.promote_f32 n) in
@@ -529,12 +529,12 @@ struct
         let n, stack = Stack.pop_f64 stack in
         let n = I64.reinterpret_f64 n in
         Stack.push_i64 stack n
-    end
+      end
 
   let exec_freinterpreti stack nn nn' =
     match nn with
-    | Text.S32 -> begin
-      match nn' with
+    | Text.S32 ->
+      begin match nn' with
       | Text.S32 ->
         let n, stack = Stack.pop_i32 stack in
         let n = F32.reinterpret_i32 n in
@@ -543,9 +543,9 @@ struct
         let n, stack = Stack.pop_i64 stack in
         let n = F32.reinterpret_i32 (I64.to_int32 n) in
         Stack.push_f32 stack n
-    end
-    | S64 -> begin
-      match nn' with
+      end
+    | S64 ->
+      begin match nn' with
       | S32 ->
         let n, stack = Stack.pop_i32 stack in
         let n = F64.reinterpret_i64 (I64.of_int32 n) in
@@ -554,7 +554,7 @@ struct
         let n, stack = Stack.pop_i64 stack in
         let n = F64.reinterpret_i64 n in
         Stack.push_f64 stack n
-    end
+      end
 
   let init_local (_id, t) : Value.t =
     match t with
@@ -938,8 +938,8 @@ struct
     | I_testop (nn, op) -> st @@ exec_itestop stack nn op
     | I_relop (nn, op) -> st @@ exec_irelop stack nn op
     | F_relop (nn, op) -> st @@ exec_frelop stack nn op
-    | I_extend8_s nn -> begin
-      match nn with
+    | I_extend8_s nn ->
+      begin match nn with
       | S32 ->
         let n, stack = Stack.pop_i32 stack in
         let n = I32.extend_s 8 n in
@@ -948,9 +948,9 @@ struct
         let n, stack = Stack.pop_i64 stack in
         let n = I64.extend_s 8 n in
         st @@ Stack.push_i64 stack n
-    end
-    | I_extend16_s nn -> begin
-      match nn with
+      end
+    | I_extend16_s nn ->
+      begin match nn with
       | S32 ->
         let n, stack = Stack.pop_i32 stack in
         let n = I32.extend_s 16 n in
@@ -959,7 +959,7 @@ struct
         let n, stack = Stack.pop_i64 stack in
         let n = I64.extend_s 16 n in
         st @@ Stack.push_i64 stack n
-    end
+      end
     | I64_extend32_s ->
       let n, stack = Stack.pop_i64 stack in
       let n = I64.extend_s 32 n in
@@ -1027,11 +1027,11 @@ struct
     | Call i -> begin
       let func = Env.get_func env i in
       exec_vfunc ~return:false state func
-    end
+      end
     | Return_call i -> begin
       let func = Env.get_func env i in
       exec_vfunc ~return:true state func
-    end
+      end
     | Br i -> State.branch state i
     | Br_if i ->
       let* b, stack =
@@ -1081,7 +1081,7 @@ struct
         let res = I64.(to_int32 @@ (old_size / page_size)) in
         st @@ Stack.push_i32 stack res
       end
-    end
+      end
     | Memory_fill memid ->
       let len, stack = Stack.pop_i32 stack in
       let c, stack = Stack.pop_i32 stack in
@@ -1286,7 +1286,7 @@ struct
         end
       in
       st stack
-    end
+      end
     | Table_init (t_i, e_i) -> begin
       let* t = Env.get_table env t_i in
       let elem = Env.get_elem env e_i in
@@ -1321,7 +1321,7 @@ struct
       in
       let* () = loop 0 () in
       st stack
-    end
+      end
     | Elem_drop i ->
       let elem = Env.get_elem env i in
       Elem.drop elem;
@@ -1648,7 +1648,7 @@ struct
       match state with
       | State.Continue state -> loop ~heartbeat state
       | State.Return res -> Choice.return res
-    end
+      end
     | [] -> (
       let* next_state = State.end_block state in
       match next_state with
