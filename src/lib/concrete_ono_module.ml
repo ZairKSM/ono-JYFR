@@ -3,23 +3,20 @@ type extern_func = Kdo.Concrete.Extern_func.extern_func
 let config : Gol_config.t ref = ref Gol_config.default_glider
 let set_config c = config := c
 
-let set_steps_limit (steps : int option) : unit = Display_buffer.steps_limit := steps
-let set_show_latest_number (num : int option) : unit = Display_buffer.show_latest_number := num
+let set_steps_limit (steps : int option) : unit =
+  Display_buffer.steps_limit := steps
+
+let set_show_latest_number (num : int option) : unit =
+  Display_buffer.show_latest_number := num
 
 open Display_buffer
 
 let view : (module Interface.S) ref = ref (module Textual : Interface.S)
 
-
-let set_render_mode (enabled : bool) : unit = 
-    view := if enabled then 
-        (module Graphics : Interface.S)
-        
-        
-    else
-        (module Textual : Interface.S)
-
-
+let set_render_mode (enabled : bool) : unit =
+  view :=
+    if enabled then (module Graphics : Interface.S)
+    else (module Textual : Interface.S)
 
 let print_i32 (n : Kdo.Concrete.I32.t) : (unit, _) Result.t =
   Logs.app (fun m -> m "%a" Kdo.Concrete.I32.pp n);
@@ -54,11 +51,12 @@ let sleep (ms : Kdo.Concrete.I32.t) : (unit, _) Result.t =
     sinon morte 🧟​
 *)
 let print_cell (cell : Kdo.Concrete.I32.t) : (unit, _) Result.t =
-    let module M = (val !view) in M.print_cell cell 
+  let module M = (val !view) in
+  M.print_cell cell
 
 let newline () : (unit, _) Result.t =
-    let module M  = (val !view) in M.newline ()
-
+  let module M = (val !view) in
+  M.newline ()
 
 (*
   dans le Readme : 
@@ -66,7 +64,8 @@ let newline () : (unit, _) Result.t =
   En mode show_latest, affichage plain sans séquences ANSI (pour les cram tests).
 *)
 let clear_screen () : (unit, _) Result.t =
-    let module M = (val !view) in M.clear_screen ()
+  let module M = (val !view) in
+  M.clear_screen ()
 
 (* valeurs pré-remplies pour la hauteur et la largeur (-w, -h) *)
 let preset_values : int Queue.t = Queue.create ()
@@ -77,7 +76,7 @@ let read_int () : (Kdo.Concrete.I32.t, _) Result.t =
     if not (Queue.is_empty preset_values) then Queue.pop preset_values
     else begin
       Format.printf "%!";
-      Scanf.scanf " %d" Fun.id 
+      Scanf.scanf " %d" Fun.id
     end
   in
   Display_buffer.push n;
