@@ -3,11 +3,17 @@
  (modules
   concrete_driver
   concrete_ono_module
+  gameConstant
+  interface
+  graphics
+  textual
+  display_buffer
   error
   gol_config
   symbolic_driver
   symbolic_ono_module
   syntax)
- (libraries fpath kdo logs game_constant)
+ (libraries fpath kdo logs raylib)
+ (modules_without_implementation interface)
  (instrumentation
   (backend bisect_ppx)))

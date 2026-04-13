@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Release History
 
+### [1.3.0] - 2026-04-09
+### Added
+- implémentation complète de l’interface graphique de la simulation avec Raylib: rendu du plateau, mise à jour des cellules et intégration à `--use-graphical-window` ([#36](https://github.com/ZairKSM/ono-JYFR/issues/36))
+
+### [1.2.1] - 2026-03-27
+### Added
+- Mise en place initiale de l'interface graphique via l'option `--use-graphical-window` avec `Raylib` ([#35](https://github.com/ZairKSM/ono-JYFR/issues/35))
+
 ### [1.2.0] - 2026-03-27
 ### Added
 - extension textuelle complète pour le jeu de la vie: lecture des dimensions via `read_int` et options `-w`/`-h` ([#18](https://github.com/ZairKSM/ono-JYFR/issues/18))

@@ -37,6 +37,7 @@ pkgs.mkShell {
     cmdliner
     fpath
     menhirLib
+    raylib
     smtml
     pkgs.owi
   ];

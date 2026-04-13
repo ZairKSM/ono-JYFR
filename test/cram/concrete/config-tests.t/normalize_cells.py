@@ -45,7 +45,7 @@ def read_constant(source, name):
 
 def main():
     # touver les casses vivantes et mortes
-    constants_path = Path(__file__).resolve().parents[4] / "src" / "GameConstant.ml"
+    constants_path = Path(__file__).resolve().parents[4] / "src" / "lib" / "GameConstant.ml"
     constants = constants_path.read_text()
     alive = read_constant(constants, "case_en_vie")
     dead = read_constant(constants, "case_morte")

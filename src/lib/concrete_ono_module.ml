@@ -3,12 +3,20 @@ type extern_func = Kdo.Concrete.Extern_func.extern_func
 let config : Gol_config.t ref = ref Gol_config.default_glider
 let set_config c = config := c
 
-(* buffer pour l'affichage *)
-let text_buffer = Buffer.create Game_constant.GameConstant.taille_buffer
-let steps_limit : int option ref = ref None
-let show_latest_number : int option ref = ref None
-let set_steps_limit (steps : int option) : unit = steps_limit := steps
-let set_show_latest_number (num : int option) : unit = show_latest_number := num
+let set_steps_limit (steps : int option) : unit =
+  Display_buffer.steps_limit := steps
+
+let set_show_latest_number (num : int option) : unit =
+  Display_buffer.show_latest_number := num
+
+open Display_buffer
+
+let view : (module Interface.S) ref = ref (module Textual : Interface.S)
+
+let set_render_mode (enabled : bool) : unit =
+  view :=
+    if enabled then (module Graphics : Interface.S)
+    else (module Textual : Interface.S)
 
 let print_i32 (n : Kdo.Concrete.I32.t) : (unit, _) Result.t =
   Logs.app (fun m -> m "%a" Kdo.Concrete.I32.pp n);
@@ -43,15 +51,12 @@ let sleep (ms : Kdo.Concrete.I32.t) : (unit, _) Result.t =
     sinon morte 🧟​
 *)
 let print_cell (cell : Kdo.Concrete.I32.t) : (unit, _) Result.t =
-  let alive = Kdo.Concrete.I32.to_int cell <> 0 in
-  Buffer.add_string text_buffer
-    (if alive then Game_constant.GameConstant.case_en_vie
-     else Game_constant.GameConstant.case_morte);
-  Ok ()
+  let module M = (val !view) in
+  M.print_cell cell
 
 let newline () : (unit, _) Result.t =
-  Buffer.add_char text_buffer '\n';
-  Ok ()
+  let module M = (val !view) in
+  M.newline ()
 
 (*
   dans le Readme : 
@@ -59,11 +64,8 @@ let newline () : (unit, _) Result.t =
   En mode show_latest, affichage plain sans séquences ANSI (pour les cram tests).
 *)
 let clear_screen () : (unit, _) Result.t =
-  let contents = Buffer.contents text_buffer in
-  Format.printf "\027[2J\027[H%s%!" contents;
-  if !show_latest_number == None then Buffer.clear text_buffer
-  else Buffer.add_char text_buffer '\n';
-  Ok ()
+  let module M = (val !view) in
+  M.clear_screen ()
 
 (* valeurs pré-remplies pour la hauteur et la largeur (-w, -h) *)
 let preset_values : int Queue.t = Queue.create ()
@@ -77,6 +79,8 @@ let read_int () : (Kdo.Concrete.I32.t, _) Result.t =
       Scanf.scanf " %d" Fun.id
     end
   in
+  Display_buffer.push n;
+
   Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int n))
 
 (* Renvoie 1 si la cellule (row, col) est vivante dans la config initiale, 0 sinon *)
