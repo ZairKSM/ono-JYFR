@@ -75,7 +75,7 @@ let read_int () : (Kdo.Concrete.I32.t, _) Result.t =
   let n =
     if not (Queue.is_empty preset_values) then Queue.pop preset_values
     else begin
-      Format.printf "%!";
+      Format.printf "Enter an integer : %!";
       Scanf.scanf " %d" Fun.id
     end
   in
