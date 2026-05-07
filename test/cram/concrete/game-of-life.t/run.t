@@ -1,6 +1,6 @@
 Test basic functions (grid, set/get cell, bounds):
   $ echo "42 42" | ono concrete game_of_life.wat
-  1
+  Enter an integer : Enter an integer : 1
   8
   9
   0

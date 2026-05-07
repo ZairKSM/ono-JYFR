@@ -53,6 +53,7 @@ Check that branching works:
     symbol symbol_0 i32 1073741824
   }
   breadcrumbs 0
+  
   ono: [ERROR] owi error: Reached problem!
   [123]
   $ ono symbolic branching_true.wat -vv
@@ -109,5 +110,6 @@ Check that branching works:
     symbol symbol_0 i32 0
   }
   breadcrumbs 1
+  
   ono: [ERROR] owi error: Reached problem!
   [123]
