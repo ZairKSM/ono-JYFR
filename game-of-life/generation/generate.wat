@@ -3,14 +3,23 @@
 
   (global $w (mut i32) (i32.const 4)) ;; width
   (global $h (mut i32) (i32.const 4)) ;; height
+  (global $turn (mut i32) (i32.const 0))
 
   (global $SIZE i32 (i32.const 16))
+  (global $total_len (mut i32) (i32.const 16)) ;; nombre total de cell
 
   (memory 1) ;; 1 page = 64 Ko,
 
   (func $sym_bit (result i32)
     (i32.and (call $i32_symbol) (i32.const 1))
   )
+
+  (func $alternate 
+        (if (i32.eq (global.get $total_len) (global.get $turn) )
+        (then (global.set $turn (i32.const 0)))
+        (else (global.set $turn (global.get $total_len)))
+        )
+    )
 
   ;; Convertit (row, col) en indice linéaire : row * w + col (car la mémoire en réalité est linéaire)
   (func $to_linear (param $row i32) (param $col i32) (result i32)
