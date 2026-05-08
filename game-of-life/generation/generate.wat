@@ -151,37 +151,13 @@
   )
 
 
-
-  (func $constraint_exists_alive_next (result i32)
-    (local $i i32) (local $j i32)
-    (local.set $i (i32.const 0))
-    (loop $outer
-      (local.set $j (i32.const 0))
-      (loop $inner
-        (if (call $next_state (local.get $i) (local.get $j))
-          (then (return (i32.const 1))))
-        (local.set $j (i32.add (local.get $j) (i32.const 1)))
-        (br_if $inner (i32.lt_u (local.get $j) (global.get $w))))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br_if $outer (i32.lt_u (local.get $i) (global.get $h))))
-    (i32.const 0)
-  )
-
-
 ;; fonction qui selectionne la contrainte --option contrainte
 ;; TODO:
   (func $check (result i32)
-    (call $constraint_exists_alive_next)
-  )
-
-
-
-(;)
-  (func $check (result i32)
     (i32.const 0)
   )
 
-  ;)
+
   (func $main
     (global.set $w (call $get_generation_width))
     (global.set $h (call $get_generation_height))
