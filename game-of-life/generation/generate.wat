@@ -151,10 +151,21 @@
   )
 
 
+;; Au tour suivant. la cellule en position (x,y) doit être vivante.
+(func $contrainte_1 (result i32) 
+      (local $x i32)
+      (local $y i32)
+
+      (local.set $x (i32.const 0))
+      (local.set $y (i32.const 0))
+
+      (call $next_state (local.get $x) (local.get $y) )
+     
+)
 ;; fonction qui selectionne la contrainte --option contrainte
 ;; TODO:
   (func $check (result i32)
-    (i32.const 0)
+        (call $contrainte_1)
   )
 
 

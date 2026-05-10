@@ -116,7 +116,8 @@ let m =
       ("is_alive_init", Extern_func (i32 ^-> i32 ^->. i32, is_alive_init));
       ("read_int", Extern_func (unit ^->. i32, read_int));
       ("get_generation_width", Extern_func (unit ^->. i32, get_generation_width));
-      ("get_generation_height", Extern_func (unit ^->. i32, get_generation_height));
+      ( "get_generation_height",
+        Extern_func (unit ^->. i32, get_generation_height) );
     ]
   in
   {

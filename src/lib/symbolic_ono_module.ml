@@ -30,7 +30,8 @@ let m =
       ("i32_symbol", Extern_func (unit ^->. i32, i32_symbol));
       ("read_int", Extern_func (unit ^->. i32, read_int));
       ("get_generation_width", Extern_func (unit ^->. i32, get_generation_width));
-      ("get_generation_height", Extern_func (unit ^->. i32, get_generation_height));
+      ( "get_generation_height",
+        Extern_func (unit ^->. i32, get_generation_height) );
     ]
   in
   {
