@@ -108,18 +108,12 @@
     (local.set $nb (call $nb_neighbours (local.get $row) (local.get $col)))
     (local.set $actual_state (call $get_cell (local.get $row) (local.get $col)))
     ;; new_state = (neigh = 3) or (actual = 1 and neighbours = 2)
-    (if (i32.or
+    (i32.or
           (i32.eq (local.get $nb) (i32.const 3))
           (i32.and
             (i32.eq (local.get $actual_state) (i32.const 1))
             (i32.eq (local.get $nb) (i32.const 2))
-          )
-        )
-      (then (local.set $new (i32.const 1)))
-      (else (local.set $new (i32.const 0)))
-    )
-
-    (local.get $new)
+          ))
   )
 
   ;;Function that iterate and create the new state of the full board
