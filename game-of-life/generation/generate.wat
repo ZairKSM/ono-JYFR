@@ -27,6 +27,10 @@
     (i32.add (i32.mul (local.get $row) (global.get $w)) (local.get $col))
   )
 
+  (func $to_coords (param $linear i32) (result i32 i32)
+    (i32.div_u (local.get $linear) (global.get $w))
+    (i32.rem_u (local.get $linear) (global.get $w))
+  )
   ;; Vérifie si (row, col) est dans les bornes
   (func $is_valid (param $row i32) (param $col i32) (result i32)
     (i32.and
@@ -173,10 +177,48 @@
 
       (i32.xor (i32.const 1) (call $next_state (local.get $x) (local.get $y)))
 )
+
+(func $_get_alives (result i32)
+  (local $i i32)
+  (local $len i32)
+  (local.set $i (i32.const 0))
+  (local.set $len (i32.const 0))
+  (loop $init
+    (local.set $len (i32.add (local.get $len) (i32.load8_u (local.get $i))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (local.get $len)
+)
+
+(func $_next_step_alives (result i32)
+  (local $i i32)
+  (local $len i32)
+  (local.set $i (i32.const 0))
+  (local.set $len (i32.const 0))
+  (loop $init
+    (local.set $len (i32.add (local.get $len) (call $next_state (call $to_coords (local.get $i)))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (local.get $len)
+)
+
+(func $contrainte_3 (result i32)
+  (local $i i32)
+  (local $any i32)
+  (local.set $i (i32.const 0))
+  (local.set $any (i32.const 0))
+  (loop $init
+    (local.set $any
+      (i32.or (local.get $any) (call $next_state (call $to_coords (local.get $i)))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (local.get $any)
+)
+
 ;; fonction qui selectionne la contrainte --option contrainte
 ;; TODO:
   (func $check (result i32)
-        (call $contrainte_1)
+        (call $contrainte_3)
   )
 
 
