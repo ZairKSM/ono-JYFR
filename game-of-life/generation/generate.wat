@@ -403,7 +403,7 @@
 )
 
 ;; Au tour suivant, il existe une ligne de N cellules vivantes.
-(func $contrainte_16 (param $n i32) (result i32)
+(func $contrainte_17_bis (param $n i32) (result i32)
   (local $i i32)
   (local $j i32)
   (local $k i32)

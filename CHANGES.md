@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Release History
 
+### [X.X.X] - 2026-05-11
+### Added
+- ajout des contraintes 17, 17_bis, 15, 14, 13, 12 ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
+
+
+### [X.X.X] - 2026-05-08
+### Added
+- implémentation du ".gol" comme valeur de retour pour `generate.wat` ([#44](https://github.com/ZairKSM/ono-JYFR/issues/44))
+
+# A COMPLÉTER 
+# A COMPLÉTER 
+# A COMPLÉTER 
+
 ### [1.3.0] - 2026-04-09
 ### Added
 - implémentation complète de l’interface graphique de la simulation avec Raylib: rendu du plateau, mise à jour des cellules et intégration à `--use-graphical-window` ([#36](https://github.com/ZairKSM/ono-JYFR/issues/36))
