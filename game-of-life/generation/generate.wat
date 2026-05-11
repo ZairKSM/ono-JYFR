@@ -150,7 +150,7 @@
 
 
 ;; Au tour suivant. la cellule en position (x,y) doit être vivante.
-(func $contrainte_1 (result i32) 
+(func $contrainte_1 (result i32)
       (local $x i32)
       (local $y i32)
 
@@ -158,11 +158,11 @@
       (local.set $y (i32.const 0))
 
       (call $next_state (local.get $x) (local.get $y) )
-     
+
 )
 
 ;; Au tour suivant. la cellule en position (x,y) doit être morte.
-(func $contrainte_2 (result i32) 
+(func $contrainte_2 (result i32)
       (local $x i32)
       (local $y i32)
 
@@ -207,6 +207,58 @@
     (local.set $i (i32.add (local.get $i) (i32.const 1)))
     (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
   (local.get $any)
+)
+
+;; Au tour suivant, il existe un motif en L de trois cellules vivantes.
+(func $contrainte_12 (result i32)
+  (local $i i32)
+  (local $j i32)
+  (local.set $i (i32.const 0))
+  (loop $outer
+    (local.set $j (i32.const 0))
+    (loop $inner
+      (if
+        (i32.or
+          (i32.or
+            (i32.and
+              (call $next_state (local.get $i) (local.get $j))
+              (i32.and
+                (call $next_state (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+              )
+            )
+            (i32.and
+              (call $next_state (local.get $i) (local.get $j))
+              (i32.and
+                (call $next_state (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))
+              )
+            )
+          )
+          (i32.or
+            (i32.and
+              (call $next_state (local.get $i) (local.get $j))
+              (i32.and
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))
+              )
+            )
+            (i32.and
+              (call $next_state (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+              (i32.and
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))
+              )
+            )
+          )
+        )
+        (then (return (i32.const 1))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $inner (i32.lt_u (local.get $j) (global.get $w)))
+    )
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $outer (i32.lt_u (local.get $i) (global.get $h))))
+  (i32.const 0)
 )
 
 ;; fonction qui selectionne la contrainte --option contrainte
