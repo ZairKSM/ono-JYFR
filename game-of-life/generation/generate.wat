@@ -467,6 +467,76 @@
   (i32.const 0)
 )
 
+;; Au tour suivant, il y a une diagonale vivante de N cellules.
+(func $contrainte_17 (param $n i32) (result i32)
+  (local $i i32)
+  (local $j i32)
+  (local $k i32)
+  (local $ok i32)
+  (local.set $i (i32.const 0))
+  (loop $outer
+    (local.set $j (i32.const 0))
+    (loop $inner
+      (if
+        ;; diagonale descendante \
+        ;; on check que le dernier point vivant n'est pas hors de la grille
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 1))
+          (i32.and
+            (i32.lt_u (i32.add (local.get $i) (local.get $n))
+              (i32.add (global.get $h) (i32.const 1)))
+            (i32.lt_u (i32.add (local.get $j) (local.get $n))
+              (i32.add (global.get $w) (i32.const 1)))))
+        (then
+          (local.set $k (i32.const 0))
+          (local.set $ok (i32.const 1))
+          ;; parcourt les N cases de la diagonale
+          (block $diag_down_stop
+            (loop $diag_down
+              (if
+                (i32.eqz
+                  (call $next_state
+                    (i32.add (local.get $i) (local.get $k))
+                    (i32.add (local.get $j) (local.get $k))))
+                (then
+                  (local.set $ok (i32.const 0))
+                  (br $diag_down_stop)))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $diag_down (i32.lt_u (local.get $k) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (if
+        ;; diagonale montante /
+        ;; on check que le dernier point vivant n'est pas hors de la grille
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 1))
+          (i32.and
+            (i32.lt_u (i32.add (local.get $i) (local.get $n))
+              (i32.add (global.get $h) (i32.const 1)))
+              (i32.ge_u (local.get $j) (i32.sub (local.get $n) (i32.const 1)))))
+        (then
+          (local.set $k (i32.const 0))
+          (local.set $ok (i32.const 1))
+          ;; parcourt les N cases de la diagonale
+          (block $diag_up_stop
+            (loop $diag_up
+              (if
+                (i32.eqz
+                  (call $next_state
+                    (i32.add (local.get $i) (local.get $k))
+                    (i32.sub (local.get $j) (local.get $k))))
+                (then
+                  (local.set $ok (i32.const 0))
+                  (br $diag_up_stop)))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $diag_up (i32.lt_u (local.get $k) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $inner (i32.lt_u (local.get $j) (global.get $w))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $outer (i32.lt_u (local.get $i) (global.get $h))))
+  (i32.const 0)
+)
+
 ;; fonction qui selectionne la contrainte --option contrainte
 ;; TODO:
   (func $check (result i32)
