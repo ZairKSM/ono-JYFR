@@ -239,6 +239,35 @@
   (i32.eqz (call $_next_step_alives))   
 )
 
+;; 6 Au tour suivant, il y a une ligne complète de cellules vivantes entre ( x , y ) et ( x ′ , y ) .
+(func $contrainte_6 (result i32)
+  (local $x i32)
+  (local $y i32)
+  (local $x' i32)
+  (local.set $x (i32.const 0))
+  (local.set $y (i32.const 0))
+  (local.set $x' (i32.const 4))
+  (loop $init
+    (if (i32.eqz (call $next_state (local.get $y) (local.get $x))) (then (return (i32.const 0))))
+    (local.set $x (i32.add (local.get $x) (i32.const 1)))
+    (br_if $init (i32.le_u (local.get $x) (local.get $x'))))
+  (i32.const 1)   
+)
+
+;; 7 Au tour suivant, il y a une colonne complète de cellules vivantes entre ( x , y ) et ( x , y ′ ) .
+(func $contrainte_7 (result i32)
+  (local $x i32)
+  (local $y i32)
+  (local $y' i32)
+  (local.set $x (i32.const 0))
+  (local.set $y (i32.const 0))
+  (local.set $y' (i32.const 4))
+  (loop $init
+    (if (i32.eqz (call $next_state (local.get $y) (local.get $x))) (then (return (i32.const 0))))
+    (local.set $y (i32.add (local.get $y) (i32.const 1)))
+    (br_if $init (i32.le_u (local.get $y) (local.get $y'))))
+  (i32.const 1)   
+)
 
 ;; Au tour suivant, il existe un motif en L de trois cellules vivantes.
 (func $contrainte_12 (result i32)
@@ -571,7 +600,7 @@
 ;; fonction qui selectionne la contrainte --option contrainte
 ;; TODO:
   (func $check (result i32)
-        (call $contrainte_4_bis)
+        (call $contrainte_6)
   )
 
 
