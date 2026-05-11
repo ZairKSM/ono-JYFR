@@ -9,7 +9,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### [X.X.X] - 2026-05-11
 ### Added
+- ajout des contraintes 4,5 ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
+
+### [X.X.X] - 2026-05-11
+### Added
 - ajout des contraintes 17, 17_bis, 15, 14, 13, 12 ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
+
+### [X.X.X] - 2026-05-10
+### Added
+- ajout des contraintes 1,3 ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
+- optimised next state (removed a useless if)
 
 
 ### [X.X.X] - 2026-05-08
