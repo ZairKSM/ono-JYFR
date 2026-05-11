@@ -330,6 +330,78 @@
   (i32.const 0)
 )
 
+;; Au tour suivant, il existe une alternance vivant/mort sur une longueur N.
+(func $contrainte_15 (param $n i32) (result i32)
+  (local $i i32)
+  (local $j i32)
+  (local $k i32)
+  (local $ok i32)
+  (local.set $i (i32.const 0))
+  (loop $rows
+    (local.set $j (i32.const 0))
+    (loop $row_starts
+      (if
+        ;;alternance horizontale de longueur N a partir de (i, j).
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 2))
+          (i32.lt_u (i32.add (local.get $j) (local.get $n))
+            (i32.add (global.get $w) (i32.const 1))))
+        (then
+          (local.set $k (i32.const 1))
+          (local.set $ok (i32.const 1))
+          (block $row_stop
+            (loop $row_inner
+              (if
+                (i32.eq
+                  (call $next_state (local.get $i) (i32.add (local.get $j) (local.get $k)))
+                  (call $next_state (local.get $i)
+                    (i32.add (local.get $j)
+                      (i32.sub (local.get $k) (i32.const 1)))))
+                (then
+                  (local.set $ok (i32.const 0))
+                  (br $row_stop)))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $row_inner (i32.lt_u (local.get $k) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $row_starts (i32.lt_u (local.get $j) (global.get $w))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $rows (i32.lt_u (local.get $i) (global.get $h))))
+  (local.set $j (i32.const 0))
+  (loop $cols
+    (local.set $i (i32.const 0))
+    (loop $col_starts
+      (if
+        ;; alternance verticale de longueur N a partir de (i, j).
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 2))
+          (i32.lt_u (i32.add (local.get $i) (local.get $n))
+            (i32.add (global.get $h) (i32.const 1))))
+        (then
+          (local.set $k (i32.const 1))
+          (local.set $ok (i32.const 1))
+          (block $col_stop
+            (loop $col_inner
+              (if
+                (i32.eq
+                  (call $next_state (i32.add (local.get $i) (local.get $k)) (local.get $j))
+                  (call $next_state
+                    (i32.add (local.get $i)
+                      (i32.sub (local.get $k) (i32.const 1)))
+                    (local.get $j)))
+                (then
+                  (local.set $ok (i32.const 0))
+                  (br $col_stop)))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $col_inner (i32.lt_u (local.get $k) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $col_starts (i32.lt_u (local.get $i) (global.get $h))))
+    (local.set $j (i32.add (local.get $j) (i32.const 1)))
+    (br_if $cols (i32.lt_u (local.get $j) (global.get $w))))
+  (i32.const 0)
+)
+
 ;; fonction qui selectionne la contrainte --option contrainte
 ;; TODO:
   (func $check (result i32)
