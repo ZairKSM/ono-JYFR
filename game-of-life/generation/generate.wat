@@ -269,6 +269,10 @@
   (i32.const 1)   
 )
 
+(func $contrainte_8 (result i32)
+    (i32.eq (call $_next_step_alives) (i32.const 35))   
+)
+
 ;; Au tour suivant, il existe un motif en L de trois cellules vivantes.
 (func $contrainte_12 (result i32)
   (local $i i32)
@@ -600,7 +604,7 @@
 ;; fonction qui selectionne la contrainte --option contrainte
 ;; TODO:
   (func $check (result i32)
-        (call $contrainte_6)
+        (call $contrainte_8)
   )
 
 
