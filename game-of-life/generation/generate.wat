@@ -195,7 +195,7 @@
     (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
   (local.get $len)
 )
-
+;; 3 Au tour suivant, il y a au moins une cellule vivante sur la grille.
 (func $contrainte_3 (result i32)
   (local $i i32)
   (local $any i32)
@@ -208,6 +208,37 @@
     (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
   (local.get $any)
 )
+;; 4 Au tour suivant, toutes les cellules sont vivantes.
+(func $contrainte_4 (result i32)
+  (local $i i32)
+  (local.set $i (i32.const 0))
+  (loop $init
+    (if (i32.eqz (call $next_state (call $to_coords (local.get $i)))) (then (return (i32.const 0))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (i32.const 1)    
+)
+
+;;4 Au tour suivant, toutes les cellules sont vivantes.
+(func $contrainte_4_bis (result i32)
+    (i32.eq (call $_next_step_alives) (global.get $total_len))   
+)
+;; 5 Au tour suivant, toutes les cellules sont mortes.
+(func $contrainte_5 (result i32)
+  (local $i i32)
+  (local.set $i (i32.const 0))
+  (loop $init
+    (if (call $next_state (call $to_coords (local.get $i))) (then (return (i32.const 0))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (i32.const 1)   
+)
+
+;; 5 Au tour suivant, toutes les cellules sont mortes.
+(func $contrainte_5_bis (result i32)
+  (i32.eqz (call $_next_step_alives))   
+)
+
 
 ;; Au tour suivant, il existe un motif en L de trois cellules vivantes.
 (func $contrainte_12 (result i32)
@@ -540,7 +571,7 @@
 ;; fonction qui selectionne la contrainte --option contrainte
 ;; TODO:
   (func $check (result i32)
-        (call $contrainte_3)
+        (call $contrainte_4_bis)
   )
 
 
