@@ -102,6 +102,10 @@ let config_file =
     value
     & opt (some existing_file_conv) None (info [ "config" ] ~doc ~docv:"CONFIG"))
 
+let constraints =
+  let doc = "Active la contrainte $(docv) pour la génération symbolique." in
+  Arg.(value & opt_all int [] (info [ "constraint" ] ~doc ~docv:"ID"))
+
 let graphics =
   let doc = "Active le rendu graphique via une fenetre Raylib." in
   Arg.(value & flag (info [ "use-graphical-window" ] ~doc))

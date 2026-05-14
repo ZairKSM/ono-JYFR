@@ -37,7 +37,9 @@ let rec rm_rf path =
 let cleanup_generation_output { workspace; _ } =
   rm_rf (Fpath.to_string workspace)
 
-let run ~source_file =
+let run ~source_file ~constraints =
+  Symbolic_ono_module.set_constraints constraints;
+
   (* Parsing. *)
   Logs.info (fun m -> m "Parsing file %a..." Fpath.pp source_file);
   let* wat_module = Kdo.Parse.Wat.Module.from_file source_file in
