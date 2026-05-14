@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 
 
-### [2.0.0] - 2026-04-11
+### [2.0.0] - 2026-04-15
 ### Added
 - solveur de polynome en WebAssembly (`solver/poly_solve.wat`) ([#43](https://github.com/ZairKSM/ono-JYFR/issues/43))
 - extension des fonctions externes disponibles pour l'exécution symbolique (dont `f32`/`f64`) ([#43](https://github.com/ZairKSM/ono-JYFR/issues/43))
@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - contraintes 1 à 8 et 12 à 15 et la 17 pour le générateur du jeu de la vie ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
 - option CLI pour choisir/appliquer une contrainte lors de la génération ([#46](https://github.com/ZairKSM/ono-JYFR/issues/46))
 - ajout du module web en JavaScript pur (`web/`) pour charger le Wasm, lire les configurations `.gol` et afficher le jeu de la vie dans un canvas ([#51](https://github.com/ZairKSM/ono-JYFR/issues/51))
+- ajout du ramdom dans le jeux de la vie ([#38](https://github.com/ZairKSM/ono-JYFR/issues/38))
 
 ### Changed
 - optimisation de `next_state` (suppression d'un `if` inutile) ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
