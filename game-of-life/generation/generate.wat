@@ -466,6 +466,54 @@
   (i32.const 0)
 )
 
+;; 16. Au tour suivant, il y a un motif en clignotant (un oscillateur de période 2).
+(func $contrainte_16 (result i32)
+  (local $i i32)
+  (local $changed i32)
+
+  ;; save de la grille initiale 
+  (local.set $i (i32.const 0))
+  (loop $save_initial
+    (i32.store8
+      (i32.add (i32.mul (global.get $total_len) (i32.const 2)) (local.get $i))
+      (i32.load8_u (i32.add (global.get $turn) (local.get $i))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $save_initial (i32.lt_u (local.get $i) (global.get $total_len))))
+
+  ;;  une cellule doit changer au moin
+  (call $iteration)
+  (local.set $changed (i32.const 0))
+  (local.set $i (i32.const 0))
+  (loop $check_changed
+    (local.set $changed
+      (i32.or
+        (local.get $changed)
+        (i32.ne
+          (i32.load8_u
+            (i32.add (i32.sub (global.get $total_len) (global.get $turn)) (local.get $i)))
+          (i32.load8_u
+            (i32.add (i32.mul (global.get $total_len) (i32.const 2)) (local.get $i))))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $check_changed (i32.lt_u (local.get $i) (global.get $total_len))))
+
+  ;; on doit revenir a la grille initial
+  (call $alternate)
+  (call $iteration)
+  (local.set $i (i32.const 0))
+  (loop $check_back
+    (if
+      (i32.ne
+        (i32.load8_u
+          (i32.add (i32.sub (global.get $total_len) (global.get $turn)) (local.get $i)))
+        (i32.load8_u
+          (i32.add (i32.mul (global.get $total_len) (i32.const 2)) (local.get $i))))
+      (then (return (i32.const 0))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $check_back (i32.lt_u (local.get $i) (global.get $total_len))))
+
+  (local.get $changed)
+)
+
 ;; Au tour suivant, il existe une ligne de N cellules vivantes.
 (func $contrainte_17_bis (param $n i32) (result i32)
   (local $i i32)
@@ -604,7 +652,7 @@
 ;; fonction qui selectionne la contrainte --option contrainte
 ;; TODO:
   (func $check (result i32)
-        (call $contrainte_8)
+        (call $contrainte_16)
   )
 
 
