@@ -21,8 +21,22 @@ Le mode `concrete` permet notamment d'utiliser les options suivantes, visibles d
 - `--config=CONFIG` pour charger une configuration initiale `.gol` (voire le fichier `game-of-life/configs/DOC.md` pour les formats de ces fichiers)
 - `-w` / `--width` et `-h` / `--height` pour fixer la taille de la grille
 - `--steps` pour limiter le nombre d'itérations
+- `--seed` pour fixer la graine de la génération pseudo-aléatoire
 - `--show_latest` pour n'afficher que les dernières configurations
 - `--use-graphical-window` pour activer l'affichage graphique 
+
+Fichiers `.gol` disponibles:
+- `acorn.gol`
+- `beacon.gol`
+- `blinker.gol`
+- `block.gol`
+- `diehard.gol`
+- `glider.gol`
+- `lwss.gol`
+- `pentadecathlon.gol`
+- `pulsar.gol`
+- `rpentomino.gol`
+- `toad.gol`
 
 voici des exemples d'exécution concrète:
 
@@ -55,7 +69,30 @@ dune exec ono -- symbolic game-of-life/generation/generate.wat
 dune exec ono -- symbolic game-of-life/generation/generate.wat --constraint=17
 ```
 
-Le mode `symbolic`, va générer une configuration du jeu de la vie qui satisfait une contrainte donnée. Le résultat de cette génération est exporté dans un fichier `.gol` dans le répertoire `game-of-life/generation`, avec un nom du type `generated.gol`.
+pour tester la génération symbolique, on peut aussi exécuter le simulateur concret sur la configuration générée:
+
+```sh
+dune exec ono -- concrete --config=game-of-life/generation/generate.gol --steps 2 --show_latest 2  -w 15 -h 15 game-of-life/game_of_life.wat 
+``` 
+
+Contraintes disponibles:
+- `1` cellule `(0,0)` vivante au tour suivant
+- `2` cellule `(0,0)` morte au tour suivant
+- `3` au moins une cellule vivante au tour suivant
+- `4` toutes les cellules vivantes au tour suivant
+- `5` toutes les cellules mortes au tour suivant
+- `6` une ligne horizontale complète de cellules vivantes
+- `7` une colonne complète de cellules vivantes
+- `8` exactement `35` cellules vivantes au tour suivant
+- `12` présence d'un motif en `L`
+- `13` présence d'un carré `2x2` de cellules vivantes
+- `14` existence d'une cellule morte qui devient vivante
+- `15` présence d'une alternance vivant/mort sur une longueur `4`
+- `16` présence d'un motif clignotant de période `2`
+- `17` présence d'une diagonale vivante de longueur `4`
+
+
+Le mode `symbolic`, va générer une configuration du jeu de la vie qui satisfait une contrainte donnée. Le résultat de cette génération est exporté dans un fichier `.gol` dans le répertoire `game-of-life/generation`, avec un nom du type `generate.gol`.
 
  
 ## Test
@@ -100,7 +137,7 @@ Le tableau suivant reprend les demandes du `README` dans leur ordre d'apparition
 | --- | --- | --- |
 | Écrire un module Wasm avec `$factorial` et un cram test | Fait | [#2](https://github.com/ZairKSM/ono-JYFR/issues/2) |
 | Ajouter `print_i64`, écrire `$square_i64` et un cram test | Fait | [#2](https://github.com/ZairKSM/ono-JYFR/issues/2) |
-| Ajouter `random_i32`, l'option `--seed` et un cram test déterministe | pas terminer | [#38](https://github.com/ZairKSM/ono-JYFR/issues/38) |
+| Ajouter `random_i32`, l'option `--seed` et un cram test déterministe | Fait | [#38](https://github.com/ZairKSM/ono-JYFR/issues/38) |
 | Ajouter les primitives OCaml `sleep`, `print_cell`, `newline`, `clear_screen` | Fait | [#9](https://github.com/ZairKSM/ono-JYFR/issues/9) |
 | Poser la base du jeu de la vie en Wasm: mémoire, dimensions, conversions, `get_cell`, `set_cell` | Fait | [#10](https://github.com/ZairKSM/ono-JYFR/issues/10) |
 | Implémenter la logique du jeu: voisins, `next_state`, itération | Fait | [#11](https://github.com/ZairKSM/ono-JYFR/issues/11) |
