@@ -1,4 +1,4 @@
-(module 
+(module
   (func $print_i32 (import "ono" "print_i32") (param i32))
   (func $get_steps (import "ono" "get_steps") (result i32))
   (func $sleep (import "ono" "sleep") (param i32))
@@ -8,9 +8,10 @@
   (func $get_show_latest (import "ono" "get_show_latest") (result i32))
   (func $read_int (import "ono" "read_int") (result i32))
   (func $is_alive_init (import "ono" "is_alive_init") (param i32) (param i32) (result i32))
+  (func $random_i32 (import "ono" "random_i32") (result i32))
 
-  (global $w (mut i32) (i32.const 42)) ;; width  
-  (global $h (mut i32) (i32.const 42)) ;; height 
+  (global $w (mut i32) (i32.const 42)) ;; width
+  (global $h (mut i32) (i32.const 42)) ;; height
   (global $turn (mut i32) (i32.const 0))
 
   (global $step (mut i32) (i32.const -1)) ;; step (-1 par default = infinie)
@@ -20,22 +21,22 @@
   (global $total_len (mut i32) (i32.const 1764)) ;; nombre total de cell
 
 
-  (memory 1) ;; 1 page = 64 Ko, 
+  (memory 1) ;; 1 page = 64 Ko,
 
 
-  (func $alternate 
+  (func $alternate
         (if (i32.eq (global.get $total_len) (global.get $turn) )
         (then (global.set $turn (i32.const 0)))
         (else (global.set $turn (global.get $total_len)))
         )
     )
-            
+
 
   ;; Convertit (row, col) en indice linéaire : row * w + col (car la mémoire en réalité est linéaire)
   (func $to_linear (param $row i32) (param $col i32) (result i32)
     (i32.add (i32.mul (local.get $row) (global.get $w)) (local.get $col))
   )
-    
+
 
   ;; Vérifie si (row, col) est dans les bornes
   (func $is_valid (param $row i32) (param $col i32) (result i32)
@@ -66,17 +67,17 @@
   )
   ;; Calculate the number of alive neighbours
   (func $nb_neighbours (param $row i32) (param $col i32) (result i32)
-    (local $count i32) ;; counter of alive neighbour 
-    (local $dr i32) ;; delta for rows 
-    (local $dc i32) ;; delta for colums 
+    (local $count i32) ;; counter of alive neighbour
+    (local $dr i32) ;; delta for rows
+    (local $dc i32) ;; delta for colums
     (local.set $count (i32.const 0))
     (local.set $dr (i32.const -1))
     (loop $outer
       (local.set $dc (i32.const -1))
       (loop $inner
         ;; don't check yourself
-        (if (i32.or 
-                (i32.ne (local.get $dr) (i32.const 0)) 
+        (if (i32.or
+                (i32.ne (local.get $dr) (i32.const 0))
                 (i32.ne (local.get $dc) (i32.const 0))
             )
         (then
@@ -92,7 +93,7 @@
             )
         )
         )
-        
+
         (local.set $dc (i32.add (local.get $dc) (i32.const 1)))
         ;; If dc <= 1, continue inner loop
         (br_if $inner (i32.le_s (local.get $dc) (i32.const 1)))
@@ -101,11 +102,11 @@
       ;; If dr <= 1, continue outer loop
       (br_if $outer (i32.le_s (local.get $dr) (i32.const 1)))
     )
-    
+
     (local.get $count)
   )
-    
-  ;; Calculate the next state of a cell based on current and neighbours 
+
+  ;; Calculate the next state of a cell based on current and neighbours
   (func $next_state (param $row i32) (param $col i32) (result i32)
     (local $nb i32)
     (local $actual_state i32)
@@ -113,9 +114,9 @@
     (local.set $nb (call $nb_neighbours (local.get $row) (local.get $col)))
     (local.set $actual_state (call $get_cell (local.get $row) (local.get $col)))
     ;; new_state = (neigh = 3) or (actual = 1 and neighbours = 2)
-    (if (i32.or 
+    (if (i32.or
           (i32.eq (local.get $nb) (i32.const 3))
-          (i32.and 
+          (i32.and
             (i32.eq (local.get $actual_state) (i32.const 1))
             (i32.eq (local.get $nb) (i32.const 2))
           )
@@ -124,11 +125,25 @@
       (else (local.set $new (i32.const 0)))
     )
 
+    ;; une cellule morte a une très faible chance d'apparaître.
+    (if
+      (i32.and
+        (i32.eq (local.get $actual_state) (i32.const 0))
+        (i32.eq (local.get $new) (i32.const 0))
+      )
+      (then
+        (if
+          (i32.eqz (i32.rem_u (call $random_i32) (i32.const 100_000)))
+          (then (local.set $new (i32.const 1)))
+        )
+      )
+    )
+
     (local.get $new)
   )
 
   ;;Function that iterate and create the new state of the full board
-  (func $iteration 
+  (func $iteration
     (local $i i32)
     (local $j i32)
     (local.set $i (i32.const 0))
@@ -136,14 +151,14 @@
         (local.set $j (i32.const 0))
 
         (loop $inner
-          (call $set_cell (local.get $i) (local.get $j) 
+          (call $set_cell (local.get $i) (local.get $j)
               (call $next_state (local.get $i) (local.get $j))
           )
-          
+
           (local.set $j (i32.add (local.get $j) (i32.const 1)))
           (br_if $inner (i32.lt_u (local.get $j) (global.get $w)))
         )
-        
+
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br_if $outer (i32.lt_u (local.get $i) (global.get $h)))
     )
@@ -204,7 +219,7 @@
 
       ;; on affiche si le step est inferieur ou egale au show_latest
       ;; et si on a pas mis de step
-      (if (i32.or 
+      (if (i32.or
       (i32.le_u (global.get $step) (global.get $show_latest)) (i32.eq (global.get $step) (i32.const -1)))
         (then (call $display_board))
       )
@@ -219,12 +234,12 @@
         )
       )
 
-      (call $sleep (i32.const 200)) 
+      (call $sleep (i32.const 200))
       (br $game)
     )
   )
 
-  (func $main 
+  (func $main
     ;; read w and h from input
     (global.set $w (call $read_int))
     (global.set $h (call $read_int))
