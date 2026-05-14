@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jeu de la vie Wasm</title>
+  </head>
+  <body>
+    <main id="app">
+      <header>
+        <div>
+          <p>Wasm</p>
+          <h1>Jeu de la vie</h1>
+        </div>
+        <div aria-live="polite">
+          <span id="status">Chargement</span>
+          <span>Generation <output id="generation">0</output></span>
+        </div>
+      </header>
+
+      <section aria-label="Controle de simulation">
+        <button id="toggle-run" type="button" disabled>Start</button>
+        <button id="step" type="button" disabled>Step</button>
+        <button id="reset" type="button" disabled>Reset</button>
+
+        <label>
+          <span>Config</span>
+          <select id="config-select" disabled></select>
+        </label>
+
+        <label>
+          <span>Vitesse</span>
+          <input id="speed" type="range" min="40" max="800" step="20" value="160" />
+          <output id="speed-value">160 ms</output>
+        </label>
+      </section>
+
+      <section aria-label="Plateau">
+        <canvas id="life-canvas" width="672" height="672" aria-label="Grille 42 par 42"></canvas>
+        <aside>
+          <dl>
+            <div>
+              <dt>Pattern</dt>
+              <dd id="pattern-name">-</dd>
+            </div>
+            <div>
+              <dt>Cellules</dt>
+              <dd id="population">0</dd>
+            </div>
+            <div>
+              <dt>Taille</dt>
+              <dd>42 x 42</dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

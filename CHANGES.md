@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - sortie de `game-of-life/generation/generate.wat` au format `.gol` ([#44](https://github.com/ZairKSM/ono-JYFR/issues/44))
 - contraintes 1 à 8 et 12 à 15 et la 17 pour le générateur du jeu de la vie ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
 - option CLI pour choisir/appliquer une contrainte lors de la génération ([#46](https://github.com/ZairKSM/ono-JYFR/issues/46))
+- ajout du module web en JavaScript pur (`web/`) pour charger le Wasm, lire les configurations `.gol` et afficher le jeu de la vie dans un canvas ([#51](https://github.com/ZairKSM/ono-JYFR/issues/51))
 
 ### Changed
 - optimisation de `next_state` (suppression d'un `if` inutile) ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
@@ -108,5 +109,3 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### [0.1.0] - 2025-12-16
 ### Added
 - first version
-
-## Unreleased
