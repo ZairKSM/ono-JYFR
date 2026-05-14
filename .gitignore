@@ -2,3 +2,5 @@ _build
 *.coverage
 _coverage
 _opam
+web/node_modules
+web/dist

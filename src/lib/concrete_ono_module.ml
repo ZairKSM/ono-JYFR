@@ -75,13 +75,19 @@ let read_int () : (Kdo.Concrete.I32.t, _) Result.t =
   let n =
     if not (Queue.is_empty preset_values) then Queue.pop preset_values
     else begin
-      Format.printf "%!";
+      Format.printf "Enter an integer : %!";
       Scanf.scanf " %d" Fun.id
     end
   in
   Display_buffer.push n;
 
   Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int n))
+
+let get_generation_width () : (Kdo.Concrete.I32.t, _) Result.t =
+  Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int Generation_config.width))
+
+let get_generation_height () : (Kdo.Concrete.I32.t, _) Result.t =
+  Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int Generation_config.height))
 
 (* Renvoie 1 si la cellule (row, col) est vivante dans la config initiale, 0 sinon *)
 let is_alive_init (row : Kdo.Concrete.I32.t) (col : Kdo.Concrete.I32.t) :
@@ -109,6 +115,9 @@ let m =
       ("get_show_latest", Extern_func (unit ^->. i32, get_show_latest));
       ("is_alive_init", Extern_func (i32 ^-> i32 ^->. i32, is_alive_init));
       ("read_int", Extern_func (unit ^->. i32, read_int));
+      ("get_generation_width", Extern_func (unit ^->. i32, get_generation_width));
+      ( "get_generation_height",
+        Extern_func (unit ^->. i32, get_generation_height) );
     ]
   in
   {

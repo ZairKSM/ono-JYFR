@@ -3,6 +3,7 @@
  (modules
   concrete_driver
   concrete_ono_module
+  generation_config
   gameConstant
   interface
   graphics

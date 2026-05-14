@@ -1,0 +1,7 @@
+# Crapaud (Toad)
+# Oscille entre deux configurations de 4 cellules cycle de période 2.
+name Toad
+offset 10 10
+
+.OOO
+OOO.
