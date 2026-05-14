@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 
 
-### [1.3.1] - 2026-04-11
+### [2.0.0] - 2026-04-11
 ### Added
 - solveur de polynome en WebAssembly (`solver/poly_solve.wat`) ([#43](https://github.com/ZairKSM/ono-JYFR/issues/43))
 - extension des fonctions externes disponibles pour l'exécution symbolique (dont `f32`/`f64`) ([#43](https://github.com/ZairKSM/ono-JYFR/issues/43))
