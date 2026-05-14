@@ -1,11 +1,18 @@
 (module
+  (type $constraint_check (func (result i32)))
+
   (func $i32_symbol (import "ono" "i32_symbol") (result i32))
   (func $get_generation_width (import "ono" "get_generation_width") (result i32))
   (func $get_generation_height (import "ono" "get_generation_height") (result i32))
+  (func $get_constraints (import "ono" "get_constraints") (result i32))
+
+  ;; un tableau de ref vers des fonctions, on l'utilise pour evité d'avoir des switch case , ou if imbriqué geant
+  (table 18 funcref)
 
   (global $w (mut i32) (i32.const 0)) ;; width
   (global $h (mut i32) (i32.const 0)) ;; height
   (global $turn (mut i32) (i32.const 0))
+  (global $constraints (mut i32) (i32.const 0))
 
   (global $total_len (mut i32) (i32.const 0)) ;; nombre total de cell
 
@@ -13,6 +20,14 @@
 
   (func $sym_bit (result i32)
     (i32.and (call $i32_symbol) (i32.const 1))
+  )
+
+  (func $use_constraint (param $id i32) (result i32)
+    (i32.ne
+      (i32.and
+        (global.get $constraints)
+        (i32.shl (i32.const 1) (local.get $id)))
+      (i32.const 0))
   )
 
   (func $alternate
@@ -649,16 +664,73 @@
   (i32.const 0)
 )
 
-;; fonction qui selectionne la contrainte --option contrainte
-;; TODO:
+  (func $contrainte_vide (result i32)
+    (i32.const 0)
+  )
+
+  (func $contrainte_13_check (result i32)
+    (call $contrainte_13 (i32.const 2))
+  )
+
+  (func $contrainte_15_check (result i32)
+    (call $contrainte_15 (i32.const 4))
+  )
+
+  (func $contrainte_17_check (result i32)
+    (call $contrainte_17 (i32.const 4))
+  )
+
+  (elem (i32.const 0)
+    $contrainte_vide
+    $contrainte_1
+    $contrainte_2
+    $contrainte_3
+    $contrainte_4_bis
+    $contrainte_5_bis
+    $contrainte_6
+    $contrainte_7
+    $contrainte_8
+    $contrainte_vide
+    $contrainte_vide
+    $contrainte_vide
+    $contrainte_12
+    $contrainte_13_check
+    $contrainte_14
+    $contrainte_15_check
+    $contrainte_16
+    $contrainte_17_check
+  )
+
+  (func $check_one (param $id i32) (result i32)
+    (if (result i32) (call $use_constraint (local.get $id))
+      (then
+        (call_indirect (type $constraint_check) (local.get $id)))
+      (else
+        (i32.const 1))
+    )
+  )
+
+
   (func $check (result i32)
-        (call $contrainte_16)
+    (local $id i32)
+    (local.set $id (i32.const 1))
+    (loop $check_loop
+      (if (i32.eqz (call $check_one (local.get $id)))
+        (then (return (i32.const 0))))
+      (local.set $id (i32.add (local.get $id) (i32.const 1)))
+      (br_if $check_loop (i32.le_u (local.get $id) (i32.const 15))))
+    (if (i32.eqz (call $check_one (i32.const 17)))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (call $check_one (i32.const 16)))
+      (then (return (i32.const 0))))
+    (i32.const 1)
   )
 
 
   (func $main
     (global.set $w (call $get_generation_width))
     (global.set $h (call $get_generation_height))
+    (global.set $constraints (call $get_constraints))
     (global.set $total_len (i32.mul (global.get $w) (global.get $h)))
     (call $init_symbolic_grid)
     (if (i32.eqz (call $check)) (then (return)))
