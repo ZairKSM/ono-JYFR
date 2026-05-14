@@ -8,6 +8,7 @@
   (func $get_show_latest (import "ono" "get_show_latest") (result i32))
   (func $read_int (import "ono" "read_int") (result i32))
   (func $is_alive_init (import "ono" "is_alive_init") (param i32) (param i32) (result i32))
+  (func $random_i32 (import "ono" "random_i32") (result i32))
 
   (global $w (mut i32) (i32.const 42)) ;; width  
   (global $h (mut i32) (i32.const 42)) ;; height 
@@ -122,6 +123,20 @@
         )
       (then (local.set $new (i32.const 1)))
       (else (local.set $new (i32.const 0)))
+    )
+
+    ;; Une cellule actuellement morte a une très faible chance d'apparaître.
+    (if
+      (i32.and
+        (i32.eq (local.get $actual_state) (i32.const 0))
+        (i32.eq (local.get $new) (i32.const 0))
+      )
+      (then
+        (if
+          (i32.eqz (i32.rem_u (call $random_i32) (i32.const 100_000)))
+          (then (local.set $new (i32.const 1)))
+        )
+      )
     )
 
     (local.get $new)
