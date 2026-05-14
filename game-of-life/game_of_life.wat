@@ -232,5 +232,9 @@
     (call $main_loop)
   )
 
+  (export "display_board" (func $display_board))
+  (export "iteration" (func $iteration))
+  (export "alternate" (func $alternate))
+
   (start $main)
 )

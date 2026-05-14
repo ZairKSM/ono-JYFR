@@ -29,9 +29,9 @@ let read_file path =
       (fun () ->
         let buf = Buffer.create 4096 in
         (try
-            while true do
-              Buffer.add_char buf (input_char ic)
-            done
+           while true do
+             Buffer.add_char buf (input_char ic)
+           done
          with End_of_file -> ());
         Ok (Buffer.contents buf))
   with Sys_error msg -> Error (`Msg msg)
@@ -95,16 +95,18 @@ let parse_file path =
   parse_from_string content
 
 (* convertie une configuration en .gol*)
-let to_string ~dimensions:(rows, cols) { name; offset_row; offset_col; alive_cells } =
+let to_string ~dimensions:(rows, cols)
+    { name; offset_row; offset_col; alive_cells } =
   let buf = Buffer.create 256 in
   (match name with
   | Some name -> Buffer.add_string buf ("name " ^ name ^ "\n")
   | None -> ());
-  Buffer.add_string buf
-    (Printf.sprintf "offset %d %d\n" offset_row offset_col);
+  Buffer.add_string buf (Printf.sprintf "offset %d %d\n" offset_row offset_col);
   Buffer.add_char buf '\n';
   let relative_cells =
-    List.map (fun (row, col) -> (row - offset_row, col - offset_col)) alive_cells
+    List.map
+      (fun (row, col) -> (row - offset_row, col - offset_col))
+      alive_cells
   in
   let rows = max 0 rows in
   let cols = max 0 cols in
@@ -147,7 +149,8 @@ let parse_symbolic_cells content =
         |> ignore)
     lines;
   let cells = List.sort compare (List.rev !cells) in
-  if cells = [] then Error (`Msg "no symbolic cell found in model") else Ok cells
+  if cells = [] then Error (`Msg "no symbolic cell found in model")
+  else Ok cells
 
 (* transforme en vraies coordonnées de cellules vivantes *)
 let alive_cells_of_symbolic_model ~width ~height cells =
@@ -174,5 +177,6 @@ let write_generated_file ~model_file ~output_file =
           ~height:Generation_config.height cells;
     }
   in
-  write_file ~dimensions:(Generation_config.height, Generation_config.width)
+  write_file
+    ~dimensions:(Generation_config.height, Generation_config.width)
     output_file config

@@ -10,7 +10,8 @@ type generation_output = {
 }
 
 let is_game_of_life_generator source_file =
-  Fpath.basename source_file = "generate.wat"  && Fpath.basename (Fpath.parent source_file) = "generation"
+  Fpath.basename source_file = "generate.wat"
+  && Fpath.basename (Fpath.parent source_file) = "generation"
 
 (* préparation du dossier temporaire *)
 let prepare_generation_output source_file =
@@ -33,9 +34,12 @@ let rec rm_rf path =
     end
     else Sys.remove path
 
-let cleanup_generation_output { workspace; _ } = rm_rf (Fpath.to_string workspace)
+let cleanup_generation_output { workspace; _ } =
+  rm_rf (Fpath.to_string workspace)
 
-let run ~source_file =
+let run ~source_file ~constraints =
+  Symbolic_ono_module.set_constraints constraints;
+
   (* Parsing. *)
   Logs.info (fun m -> m "Parsing file %a..." Fpath.pp source_file);
   let* wat_module = Kdo.Parse.Wat.Module.from_file source_file in
@@ -78,8 +82,7 @@ let run ~source_file =
     else None
   in
   Fun.protect
-    ~finally:(fun () ->
-      Option.iter cleanup_generation_output generation_output)
+    ~finally:(fun () -> Option.iter cleanup_generation_output generation_output)
     (fun () ->
       (* en mode generation `Found_bug` correspond a une solution  *)
       let no_stop_at_failure = Option.is_none generation_output in
@@ -94,8 +97,9 @@ let run ~source_file =
       let result =
         Interpret.modul link_state linked_module
         |> Kdo.Symbolic.Driver.handle_result
-             ~exploration_strategy:Kdo.Symbolic.Parameters.Exploration_strategy.FIFO
-             ~workers:4 ~no_stop_at_failure ~no_value:false
+             ~exploration_strategy:
+               Kdo.Symbolic.Parameters.Exploration_strategy.FIFO ~workers:4
+             ~no_stop_at_failure ~no_value:false
              ~no_assert_failure_expression_printing:false
              ~deterministic_result_order:false
              ~fail_mode:Kdo.Symbolic.Parameters.Both ~workspace
@@ -106,11 +110,15 @@ let run ~source_file =
       match (generation_output, result) with
       (* mode standerd *)
       | None, Ok () -> Ok ()
-      | None, Error e -> Fmt.error_msg "owi error: %s" (Owi.Result.err_to_string e)
+      | None, Error e ->
+          Fmt.error_msg "owi error: %s" (Owi.Result.err_to_string e)
       (* mode generation: où si on a une érreur c'est qu'on a trouvé une configuration . *)
       | Some { model_file; output_file; _ }, Error (`Found_bug _) ->
           let* () = Gol_config.write_generated_file ~model_file ~output_file in
           Logs.app (fun m -> m "Generated %a" Fpath.pp output_file);
           Ok ()
-      | Some _, Ok () -> Fmt.error_msg "no satisfying configuration found for %a" Fpath.pp source_file
-      | Some _, Error e -> Fmt.error_msg "owi error: %s" (Owi.Result.err_to_string e))
+      | Some _, Ok () ->
+          Fmt.error_msg "no satisfying configuration found for %a" Fpath.pp
+            source_file
+      | Some _, Error e ->
+          Fmt.error_msg "owi error: %s" (Owi.Result.err_to_string e))

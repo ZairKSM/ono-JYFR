@@ -1,0 +1,9 @@
+# Beacon
+# Oscillateur simple de période 2, composé de deux blocs qui clignotent.
+name Beacon
+offset 10 10
+
+OO..
+OO..
+..OO
+..OO

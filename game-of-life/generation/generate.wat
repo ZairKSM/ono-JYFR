@@ -1,11 +1,18 @@
 (module
+  (type $constraint_check (func (result i32)))
+
   (func $i32_symbol (import "ono" "i32_symbol") (result i32))
   (func $get_generation_width (import "ono" "get_generation_width") (result i32))
   (func $get_generation_height (import "ono" "get_generation_height") (result i32))
+  (func $get_constraints (import "ono" "get_constraints") (result i32))
+
+  ;; un tableau de ref vers des fonctions, on l'utilise pour evité d'avoir des switch case , ou if imbriqué geant
+  (table 18 funcref)
 
   (global $w (mut i32) (i32.const 0)) ;; width
   (global $h (mut i32) (i32.const 0)) ;; height
   (global $turn (mut i32) (i32.const 0))
+  (global $constraints (mut i32) (i32.const 0))
 
   (global $total_len (mut i32) (i32.const 0)) ;; nombre total de cell
 
@@ -13,6 +20,14 @@
 
   (func $sym_bit (result i32)
     (i32.and (call $i32_symbol) (i32.const 1))
+  )
+
+  (func $use_constraint (param $id i32) (result i32)
+    (i32.ne
+      (i32.and
+        (global.get $constraints)
+        (i32.shl (i32.const 1) (local.get $id)))
+      (i32.const 0))
   )
 
   (func $alternate
@@ -27,6 +42,10 @@
     (i32.add (i32.mul (local.get $row) (global.get $w)) (local.get $col))
   )
 
+  (func $to_coords (param $linear i32) (result i32 i32)
+    (i32.div_u (local.get $linear) (global.get $w))
+    (i32.rem_u (local.get $linear) (global.get $w))
+  )
   ;; Vérifie si (row, col) est dans les bornes
   (func $is_valid (param $row i32) (param $col i32) (result i32)
     (i32.and
@@ -104,18 +123,12 @@
     (local.set $nb (call $nb_neighbours (local.get $row) (local.get $col)))
     (local.set $actual_state (call $get_cell (local.get $row) (local.get $col)))
     ;; new_state = (neigh = 3) or (actual = 1 and neighbours = 2)
-    (if (i32.or
+    (i32.or
           (i32.eq (local.get $nb) (i32.const 3))
           (i32.and
             (i32.eq (local.get $actual_state) (i32.const 1))
             (i32.eq (local.get $nb) (i32.const 2))
-          )
-        )
-      (then (local.set $new (i32.const 1)))
-      (else (local.set $new (i32.const 0)))
-    )
-
-    (local.get $new)
+          ))
   )
 
   ;;Function that iterate and create the new state of the full board
@@ -151,16 +164,573 @@
   )
 
 
-;; fonction qui selectionne la contrainte --option contrainte
-;; TODO:
-  (func $check (result i32)
+;; Au tour suivant. la cellule en position (x,y) doit être vivante.
+(func $contrainte_1 (result i32)
+      (local $x i32)
+      (local $y i32)
+
+      (local.set $x (i32.const 0))
+      (local.set $y (i32.const 0))
+
+      (call $next_state (local.get $x) (local.get $y) )
+
+)
+
+;; Au tour suivant. la cellule en position (x,y) doit être morte.
+(func $contrainte_2 (result i32)
+      (local $x i32)
+      (local $y i32)
+
+      (local.set $x (i32.const 0))
+      (local.set $y (i32.const 0))
+
+      (i32.xor (i32.const 1) (call $next_state (local.get $x) (local.get $y)))
+)
+
+(func $_get_alives (result i32)
+  (local $i i32)
+  (local $len i32)
+  (local.set $i (i32.const 0))
+  (local.set $len (i32.const 0))
+  (loop $init
+    (local.set $len (i32.add (local.get $len) (i32.load8_u (local.get $i))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (local.get $len)
+)
+
+(func $_next_step_alives (result i32)
+  (local $i i32)
+  (local $len i32)
+  (local.set $i (i32.const 0))
+  (local.set $len (i32.const 0))
+  (loop $init
+    (local.set $len (i32.add (local.get $len) (call $next_state (call $to_coords (local.get $i)))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (local.get $len)
+)
+;; 3 Au tour suivant, il y a au moins une cellule vivante sur la grille.
+(func $contrainte_3 (result i32)
+  (local $i i32)
+  (local $any i32)
+  (local.set $i (i32.const 0))
+  (local.set $any (i32.const 0))
+  (loop $init
+    (local.set $any
+      (i32.or (local.get $any) (call $next_state (call $to_coords (local.get $i)))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (local.get $any)
+)
+;; 4 Au tour suivant, toutes les cellules sont vivantes.
+(func $contrainte_4 (result i32)
+  (local $i i32)
+  (local.set $i (i32.const 0))
+  (loop $init
+    (if (i32.eqz (call $next_state (call $to_coords (local.get $i)))) (then (return (i32.const 0))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (i32.const 1)    
+)
+
+;;4 Au tour suivant, toutes les cellules sont vivantes.
+(func $contrainte_4_bis (result i32)
+    (i32.eq (call $_next_step_alives) (global.get $total_len))   
+)
+;; 5 Au tour suivant, toutes les cellules sont mortes.
+(func $contrainte_5 (result i32)
+  (local $i i32)
+  (local.set $i (i32.const 0))
+  (loop $init
+    (if (call $next_state (call $to_coords (local.get $i))) (then (return (i32.const 0))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (i32.const 1)   
+)
+
+;; 5 Au tour suivant, toutes les cellules sont mortes.
+(func $contrainte_5_bis (result i32)
+  (i32.eqz (call $_next_step_alives))   
+)
+
+;; 6 Au tour suivant, il y a une ligne complète de cellules vivantes entre ( x , y ) et ( x ′ , y ) .
+(func $contrainte_6 (result i32)
+  (local $x i32)
+  (local $y i32)
+  (local $x' i32)
+  (local.set $x (i32.const 0))
+  (local.set $y (i32.const 0))
+  (local.set $x' (i32.const 4))
+  (loop $init
+    (if (i32.eqz (call $next_state (local.get $y) (local.get $x))) (then (return (i32.const 0))))
+    (local.set $x (i32.add (local.get $x) (i32.const 1)))
+    (br_if $init (i32.le_u (local.get $x) (local.get $x'))))
+  (i32.const 1)   
+)
+
+;; 7 Au tour suivant, il y a une colonne complète de cellules vivantes entre ( x , y ) et ( x , y ′ ) .
+(func $contrainte_7 (result i32)
+  (local $x i32)
+  (local $y i32)
+  (local $y' i32)
+  (local.set $x (i32.const 0))
+  (local.set $y (i32.const 0))
+  (local.set $y' (i32.const 4))
+  (loop $init
+    (if (i32.eqz (call $next_state (local.get $y) (local.get $x))) (then (return (i32.const 0))))
+    (local.set $y (i32.add (local.get $y) (i32.const 1)))
+    (br_if $init (i32.le_u (local.get $y) (local.get $y'))))
+  (i32.const 1)   
+)
+
+(func $contrainte_8 (result i32)
+    (i32.eq (call $_next_step_alives) (i32.const 35))   
+)
+
+;; Au tour suivant, il existe un motif en L de trois cellules vivantes.
+(func $contrainte_12 (result i32)
+  (local $i i32)
+  (local $j i32)
+  (local.set $i (i32.const 0))
+  (loop $outer
+    (local.set $j (i32.const 0))
+    (loop $inner
+      (if
+        (i32.or
+          (i32.or
+            (i32.and
+              (call $next_state (local.get $i) (local.get $j))
+              (i32.and
+                (call $next_state (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+              )
+            )
+            (i32.and
+              (call $next_state (local.get $i) (local.get $j))
+              (i32.and
+                (call $next_state (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))
+              )
+            )
+          )
+          (i32.or
+            (i32.and
+              (call $next_state (local.get $i) (local.get $j))
+              (i32.and
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))
+              )
+            )
+            (i32.and
+              (call $next_state (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+              (i32.and
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+                (call $next_state (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))
+              )
+            )
+          )
+        )
+        (then (return (i32.const 1))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $inner (i32.lt_u (local.get $j) (global.get $w)))
+    )
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $outer (i32.lt_u (local.get $i) (global.get $h))))
+  (i32.const 0)
+)
+
+;; Au tour suivant, il existe un carre NxN de cellules vivantes.
+(func $contrainte_13 (param $n i32) (result i32)
+  (local $i i32)
+  (local $j i32)
+  (local $di i32)
+  (local $dj i32)
+  (local $ok i32)
+  (local.set $i (i32.const 0))
+  (loop $outer
+    (local.set $j (i32.const 0))
+    (loop $inner
+      (if
+        ;; test si  on sort pas de la grille.
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 1))
+          (i32.and
+            (i32.lt_u (i32.add (local.get $i) (local.get $n))
+              (i32.add (global.get $h) (i32.const 1)))
+            (i32.lt_u (i32.add (local.get $j) (local.get $n))
+              (i32.add (global.get $w) (i32.const 1)))))
+        (then
+          ;; parcourt toutes les cases du carre
+          (local.set $ok (i32.const 1))
+          (local.set $di (i32.const 0))
+          (block $square_stop
+            (loop $square_rows
+              (local.set $dj (i32.const 0))
+              (block $square_row_stop
+                (loop $square_cols
+                  (if
+                    (i32.eqz
+                      (call $next_state
+                        (i32.add (local.get $i) (local.get $di))
+                        (i32.add (local.get $j) (local.get $dj))))
+                    (then
+                      (local.set $ok (i32.const 0))
+                      (br $square_stop)))
+                  (local.set $dj (i32.add (local.get $dj) (i32.const 1)))
+                  (br_if $square_cols (i32.lt_u (local.get $dj) (local.get $n)))))
+              (local.set $di (i32.add (local.get $di) (i32.const 1)))
+              (br_if $square_rows (i32.lt_u (local.get $di) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $inner (i32.lt_u (local.get $j) (global.get $w))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $outer (i32.lt_u (local.get $i) (global.get $h))))
+  (i32.const 0)
+)
+
+;; Au tour suivant, il existe une cellule morte qui devient vivante.
+(func $contrainte_14 (result i32)
+  (local $i i32)
+  (local $j i32)
+  (local.set $i (i32.const 0))
+  (loop $outer
+    (local.set $j (i32.const 0))
+    (loop $inner
+      (if
+        (i32.and
+          (i32.eqz (call $get_cell (local.get $i) (local.get $j)))
+          (call $next_state (local.get $i) (local.get $j)))
+        (then (return (i32.const 1))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $inner (i32.lt_u (local.get $j) (global.get $w))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $outer (i32.lt_u (local.get $i) (global.get $h))))
+  (i32.const 0)
+)
+
+;; Au tour suivant, il existe une alternance vivant/mort sur une longueur N.
+(func $contrainte_15 (param $n i32) (result i32)
+  (local $i i32)
+  (local $j i32)
+  (local $k i32)
+  (local $ok i32)
+  (local.set $i (i32.const 0))
+  (loop $rows
+    (local.set $j (i32.const 0))
+    (loop $row_starts
+      (if
+        ;;alternance horizontale de longueur N a partir de (i, j).
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 2))
+          (i32.lt_u (i32.add (local.get $j) (local.get $n))
+            (i32.add (global.get $w) (i32.const 1))))
+        (then
+          (local.set $k (i32.const 1))
+          (local.set $ok (i32.const 1))
+          (block $row_stop
+            (loop $row_inner
+              (if
+                (i32.eq
+                  (call $next_state (local.get $i) (i32.add (local.get $j) (local.get $k)))
+                  (call $next_state (local.get $i)
+                    (i32.add (local.get $j)
+                      (i32.sub (local.get $k) (i32.const 1)))))
+                (then
+                  (local.set $ok (i32.const 0))
+                  (br $row_stop)))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $row_inner (i32.lt_u (local.get $k) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $row_starts (i32.lt_u (local.get $j) (global.get $w))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $rows (i32.lt_u (local.get $i) (global.get $h))))
+  (local.set $j (i32.const 0))
+  (loop $cols
+    (local.set $i (i32.const 0))
+    (loop $col_starts
+      (if
+        ;; alternance verticale de longueur N a partir de (i, j).
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 2))
+          (i32.lt_u (i32.add (local.get $i) (local.get $n))
+            (i32.add (global.get $h) (i32.const 1))))
+        (then
+          (local.set $k (i32.const 1))
+          (local.set $ok (i32.const 1))
+          (block $col_stop
+            (loop $col_inner
+              (if
+                (i32.eq
+                  (call $next_state (i32.add (local.get $i) (local.get $k)) (local.get $j))
+                  (call $next_state
+                    (i32.add (local.get $i)
+                      (i32.sub (local.get $k) (i32.const 1)))
+                    (local.get $j)))
+                (then
+                  (local.set $ok (i32.const 0))
+                  (br $col_stop)))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $col_inner (i32.lt_u (local.get $k) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $col_starts (i32.lt_u (local.get $i) (global.get $h))))
+    (local.set $j (i32.add (local.get $j) (i32.const 1)))
+    (br_if $cols (i32.lt_u (local.get $j) (global.get $w))))
+  (i32.const 0)
+)
+
+;; 16. Au tour suivant, il y a un motif en clignotant (un oscillateur de période 2).
+(func $contrainte_16 (result i32)
+  (local $i i32)
+  (local $changed i32)
+
+  ;; save de la grille initiale 
+  (local.set $i (i32.const 0))
+  (loop $save_initial
+    (i32.store8
+      (i32.add (i32.mul (global.get $total_len) (i32.const 2)) (local.get $i))
+      (i32.load8_u (i32.add (global.get $turn) (local.get $i))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $save_initial (i32.lt_u (local.get $i) (global.get $total_len))))
+
+  ;;  une cellule doit changer au moin
+  (call $iteration)
+  (local.set $changed (i32.const 0))
+  (local.set $i (i32.const 0))
+  (loop $check_changed
+    (local.set $changed
+      (i32.or
+        (local.get $changed)
+        (i32.ne
+          (i32.load8_u
+            (i32.add (i32.sub (global.get $total_len) (global.get $turn)) (local.get $i)))
+          (i32.load8_u
+            (i32.add (i32.mul (global.get $total_len) (i32.const 2)) (local.get $i))))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $check_changed (i32.lt_u (local.get $i) (global.get $total_len))))
+
+  ;; on doit revenir a la grille initial
+  (call $alternate)
+  (call $iteration)
+  (local.set $i (i32.const 0))
+  (loop $check_back
+    (if
+      (i32.ne
+        (i32.load8_u
+          (i32.add (i32.sub (global.get $total_len) (global.get $turn)) (local.get $i)))
+        (i32.load8_u
+          (i32.add (i32.mul (global.get $total_len) (i32.const 2)) (local.get $i))))
+      (then (return (i32.const 0))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $check_back (i32.lt_u (local.get $i) (global.get $total_len))))
+
+  (local.get $changed)
+)
+
+;; Au tour suivant, il existe une ligne de N cellules vivantes.
+(func $contrainte_17_bis (param $n i32) (result i32)
+  (local $i i32)
+  (local $j i32)
+  (local $k i32)
+  (local $ok i32)
+  (local.set $i (i32.const 0))
+  (loop $rows
+    (local.set $j (i32.const 0))
+    (loop $row_starts
+      (if
+        ;; une ligne horizontale de longueur N a partir de (i, j).
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 1))
+          (i32.lt_u (i32.add (local.get $j) (local.get $n))
+            (i32.add (global.get $w) (i32.const 1))))
+        (then
+          (local.set $k (i32.const 0))
+          (local.set $ok (i32.const 1))
+          (block $row_stop
+            (loop $row_inner
+              (if
+                (i32.eqz
+                  (call $next_state (local.get $i) (i32.add (local.get $j) (local.get $k))))
+                (then
+                  (local.set $ok (i32.const 0))
+                  (br $row_stop)))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $row_inner (i32.lt_u (local.get $k) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $row_starts (i32.lt_u (local.get $j) (global.get $w))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $rows (i32.lt_u (local.get $i) (global.get $h))))
+  (local.set $j (i32.const 0))
+  (loop $cols
+    (local.set $i (i32.const 0))
+    (loop $col_starts
+      (if
+        ;; une ligne verticale de longueur N a partir de (i, j).
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 1))
+          (i32.lt_u (i32.add (local.get $i) (local.get $n))
+            (i32.add (global.get $h) (i32.const 1))))
+        (then
+          (local.set $k (i32.const 0))
+          (local.set $ok (i32.const 1))
+          (block $col_stop
+            (loop $col_inner
+              (if
+                (i32.eqz
+                  (call $next_state (i32.add (local.get $i) (local.get $k)) (local.get $j)))
+                (then
+                  (local.set $ok (i32.const 0))
+                  (br $col_stop)))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $col_inner (i32.lt_u (local.get $k) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $col_starts (i32.lt_u (local.get $i) (global.get $h))))
+    (local.set $j (i32.add (local.get $j) (i32.const 1)))
+    (br_if $cols (i32.lt_u (local.get $j) (global.get $w))))
+  (i32.const 0)
+)
+
+;; Au tour suivant, il y a une diagonale vivante de N cellules.
+(func $contrainte_17 (param $n i32) (result i32)
+  (local $i i32)
+  (local $j i32)
+  (local $k i32)
+  (local $ok i32)
+  (local.set $i (i32.const 0))
+  (loop $outer
+    (local.set $j (i32.const 0))
+    (loop $inner
+      (if
+        ;; diagonale descendante \
+        ;; on check que le dernier point vivant n'est pas hors de la grille
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 1))
+          (i32.and
+            (i32.lt_u (i32.add (local.get $i) (local.get $n))
+              (i32.add (global.get $h) (i32.const 1)))
+            (i32.lt_u (i32.add (local.get $j) (local.get $n))
+              (i32.add (global.get $w) (i32.const 1)))))
+        (then
+          (local.set $k (i32.const 0))
+          (local.set $ok (i32.const 1))
+          ;; parcourt les N cases de la diagonale
+          (block $diag_down_stop
+            (loop $diag_down
+              (if
+                (i32.eqz
+                  (call $next_state
+                    (i32.add (local.get $i) (local.get $k))
+                    (i32.add (local.get $j) (local.get $k))))
+                (then
+                  (local.set $ok (i32.const 0))
+                  (br $diag_down_stop)))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $diag_down (i32.lt_u (local.get $k) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (if
+        ;; diagonale montante /
+        ;; on check que le dernier point vivant n'est pas hors de la grille
+        (i32.and
+          (i32.ge_u (local.get $n) (i32.const 1))
+          (i32.and
+            (i32.lt_u (i32.add (local.get $i) (local.get $n))
+              (i32.add (global.get $h) (i32.const 1)))
+              (i32.ge_u (local.get $j) (i32.sub (local.get $n) (i32.const 1)))))
+        (then
+          (local.set $k (i32.const 0))
+          (local.set $ok (i32.const 1))
+          ;; parcourt les N cases de la diagonale
+          (block $diag_up_stop
+            (loop $diag_up
+              (if
+                (i32.eqz
+                  (call $next_state
+                    (i32.add (local.get $i) (local.get $k))
+                    (i32.sub (local.get $j) (local.get $k))))
+                (then
+                  (local.set $ok (i32.const 0))
+                  (br $diag_up_stop)))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $diag_up (i32.lt_u (local.get $k) (local.get $n)))))
+          (if (local.get $ok) (then (return (i32.const 1))))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $inner (i32.lt_u (local.get $j) (global.get $w))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $outer (i32.lt_u (local.get $i) (global.get $h))))
+  (i32.const 0)
+)
+
+  (func $contrainte_vide (result i32)
     (i32.const 0)
+  )
+
+  (func $contrainte_13_check (result i32)
+    (call $contrainte_13 (i32.const 2))
+  )
+
+  (func $contrainte_15_check (result i32)
+    (call $contrainte_15 (i32.const 4))
+  )
+
+  (func $contrainte_17_check (result i32)
+    (call $contrainte_17 (i32.const 4))
+  )
+
+  (elem (i32.const 0)
+    $contrainte_vide
+    $contrainte_1
+    $contrainte_2
+    $contrainte_3
+    $contrainte_4_bis
+    $contrainte_5_bis
+    $contrainte_6
+    $contrainte_7
+    $contrainte_8
+    $contrainte_vide
+    $contrainte_vide
+    $contrainte_vide
+    $contrainte_12
+    $contrainte_13_check
+    $contrainte_14
+    $contrainte_15_check
+    $contrainte_16
+    $contrainte_17_check
+  )
+
+  (func $check_one (param $id i32) (result i32)
+    (if (result i32) (call $use_constraint (local.get $id))
+      (then
+        (call_indirect (type $constraint_check) (local.get $id)))
+      (else
+        (i32.const 1))
+    )
+  )
+
+
+  (func $check (result i32)
+    (local $id i32)
+    (local.set $id (i32.const 1))
+    (loop $check_loop
+      (if (i32.eqz (call $check_one (local.get $id)))
+        (then (return (i32.const 0))))
+      (local.set $id (i32.add (local.get $id) (i32.const 1)))
+      (br_if $check_loop (i32.le_u (local.get $id) (i32.const 15))))
+    (if (i32.eqz (call $check_one (i32.const 17)))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (call $check_one (i32.const 16)))
+      (then (return (i32.const 0))))
+    (i32.const 1)
   )
 
 
   (func $main
     (global.set $w (call $get_generation_width))
     (global.set $h (call $get_generation_height))
+    (global.set $constraints (call $get_constraints))
     (global.set $total_len (i32.mul (global.get $w) (global.get $h)))
     (call $init_symbolic_grid)
     (if (i32.eqz (call $check)) (then (return)))
