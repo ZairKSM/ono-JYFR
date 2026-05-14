@@ -9,25 +9,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 
 
-### [X.X.X] - 2026-05-11
+### [1.3.1] - 2026-04-11
 ### Added
-- ajout des contraintes 6,7,8 ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
-- ajout des contraintes 4,5 ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
-- ajout des contraintes 17, 17_bis, 15, 14, 13, 12 ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
+- solveur de polynome en WebAssembly (`solver/poly_solve.wat`) ([#43](https://github.com/ZairKSM/ono-JYFR/issues/43))
+- extension des fonctions externes disponibles pour l'exécution symbolique (dont `f32`/`f64`) ([#43](https://github.com/ZairKSM/ono-JYFR/issues/43))
+- génération symbolique d'une grille du jeu de la vie sans contrainte ([#44](https://github.com/ZairKSM/ono-JYFR/issues/44))
+- sortie de `game-of-life/generation/generate.wat` au format `.gol` ([#44](https://github.com/ZairKSM/ono-JYFR/issues/44))
+- contraintes 1 à 8 et 12 à 15 et la 17 pour le générateur du jeu de la vie ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
+- option CLI pour choisir/appliquer une contrainte lors de la génération ([#46](https://github.com/ZairKSM/ono-JYFR/issues/46))
 
-### [X.X.X] - 2026-05-10
-### Added
-- ajout des contraintes 1,3 ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
-- optimised next state (removed a useless if)
+### Changed
+- optimisation de `next_state` (suppression d'un `if` inutile) ([#45](https://github.com/ZairKSM/ono-JYFR/issues/45))
+- ajustements des cram tests (concret/symbolique) pour la génération `.gol` et les nouvelles options ([#44](https://github.com/ZairKSM/ono-JYFR/issues/44), [#46](https://github.com/ZairKSM/ono-JYFR/issues/46))
 
-
-### [X.X.X] - 2026-05-08
-### Added
-- implémentation du ".gol" comme valeur de retour pour `generate.wat` ([#44](https://github.com/ZairKSM/ono-JYFR/issues/44))
-
-# A COMPLÉTER 
-# A COMPLÉTER 
-# A COMPLÉTER 
 
 ### [1.3.0] - 2026-04-09
 ### Added
