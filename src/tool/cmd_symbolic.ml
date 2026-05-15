@@ -14,7 +14,7 @@ let term =
   and+ constraints = constraints in
   let ( let* ) = Result.bind in
   let* () =
-    match width, height with
+    match (width, height) with
     | Some n, _ when n <= 0 -> Error (`Msg "--width doit etre > 0")
     | _, Some n when n <= 0 -> Error (`Msg "--height doit etre > 0")
     | _ -> Ok ()
@@ -23,14 +23,14 @@ let term =
   let invalid_constraints =
     List.filter
       (fun ({ id; _ } : Ono.Symbolic_ono_module.constraint_spec) ->
-        not
-          (List.mem id Ono.Symbolic_ono_module.supported_constraints))
+        not (List.mem id Ono.Symbolic_ono_module.supported_constraints))
       constraints
   in
   if invalid_constraints <> [] then
     let constraints =
       invalid_constraints
-      |> List.map (fun ({ id; _ } : Ono.Symbolic_ono_module.constraint_spec) -> string_of_int id)
+      |> List.map (fun ({ id; _ } : Ono.Symbolic_ono_module.constraint_spec) ->
+          string_of_int id)
       |> String.concat ", "
     in
     Error (`Msg ("contrainte non supportee: " ^ constraints))
