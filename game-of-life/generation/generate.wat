@@ -5,6 +5,9 @@
   (func $get_generation_width (import "ono" "get_generation_width") (result i32))
   (func $get_generation_height (import "ono" "get_generation_height") (result i32))
   (func $get_constraints (import "ono" "get_constraints") (result i32))
+  (func $get_constraint_13_arg (import "ono" "get_constraint_13_arg") (result i32))
+  (func $get_constraint_15_arg (import "ono" "get_constraint_15_arg") (result i32))
+  (func $get_constraint_17_arg (import "ono" "get_constraint_17_arg") (result i32))
 
   ;; un tableau de ref vers des fonctions, on l'utilise pour evité d'avoir des switch case , ou if imbriqué geant
   (table 18 funcref)
@@ -231,12 +234,12 @@
     (if (i32.eqz (call $next_state (call $to_coords (local.get $i)))) (then (return (i32.const 0))))
     (local.set $i (i32.add (local.get $i) (i32.const 1)))
     (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
-  (i32.const 1)    
+  (i32.const 1)
 )
 
 ;;4 Au tour suivant, toutes les cellules sont vivantes.
 (func $contrainte_4_bis (result i32)
-    (i32.eq (call $_next_step_alives) (global.get $total_len))   
+    (i32.eq (call $_next_step_alives) (global.get $total_len))
 )
 ;; 5 Au tour suivant, toutes les cellules sont mortes.
 (func $contrainte_5 (result i32)
@@ -246,12 +249,12 @@
     (if (call $next_state (call $to_coords (local.get $i))) (then (return (i32.const 0))))
     (local.set $i (i32.add (local.get $i) (i32.const 1)))
     (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
-  (i32.const 1)   
+  (i32.const 1)
 )
 
 ;; 5 Au tour suivant, toutes les cellules sont mortes.
 (func $contrainte_5_bis (result i32)
-  (i32.eqz (call $_next_step_alives))   
+  (i32.eqz (call $_next_step_alives))
 )
 
 ;; 6 Au tour suivant, il y a une ligne complète de cellules vivantes entre ( x , y ) et ( x ′ , y ) .
@@ -266,7 +269,7 @@
     (if (i32.eqz (call $next_state (local.get $y) (local.get $x))) (then (return (i32.const 0))))
     (local.set $x (i32.add (local.get $x) (i32.const 1)))
     (br_if $init (i32.le_u (local.get $x) (local.get $x'))))
-  (i32.const 1)   
+  (i32.const 1)
 )
 
 ;; 7 Au tour suivant, il y a une colonne complète de cellules vivantes entre ( x , y ) et ( x , y ′ ) .
@@ -281,11 +284,11 @@
     (if (i32.eqz (call $next_state (local.get $y) (local.get $x))) (then (return (i32.const 0))))
     (local.set $y (i32.add (local.get $y) (i32.const 1)))
     (br_if $init (i32.le_u (local.get $y) (local.get $y'))))
-  (i32.const 1)   
+  (i32.const 1)
 )
 
 (func $contrainte_8 (result i32)
-    (i32.eq (call $_next_step_alives) (i32.const 35))   
+    (i32.eq (call $_next_step_alives) (i32.const 35))
 )
 
 
@@ -329,7 +332,7 @@
 
     (local.get $count)
   )
- 
+
 ;; 10 Au tour suivant, il existe une cellule entourée de cellules vivantes.
 (func $contrainte_10 (result i32)
   (local $i i32)
@@ -589,7 +592,7 @@
   (local $i i32)
   (local $changed i32)
 
-  ;; save de la grille initiale 
+  ;; save de la grille initiale
   (local.set $i (i32.const 0))
   (loop $save_initial
     (i32.store8
@@ -772,15 +775,15 @@
   )
 
   (func $contrainte_13_check (result i32)
-    (call $contrainte_13 (i32.const 2))
+    (call $contrainte_13 (call $get_constraint_13_arg))
   )
 
   (func $contrainte_15_check (result i32)
-    (call $contrainte_15 (i32.const 4))
+    (call $contrainte_15 (call $get_constraint_15_arg))
   )
 
   (func $contrainte_17_check (result i32)
-    (call $contrainte_17 (i32.const 4))
+    (call $contrainte_17 (call $get_constraint_17_arg))
   )
 
   (elem (i32.const 0)

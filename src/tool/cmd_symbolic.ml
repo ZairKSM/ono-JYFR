@@ -12,14 +12,16 @@ let term =
   and+ constraints = constraints in
   let invalid_constraints =
     List.filter
-      (fun constraint_id ->
+      (fun { Ono.Symbolic_ono_module.id; _ } ->
         not
-          (List.mem constraint_id Ono.Symbolic_ono_module.supported_constraints))
+          (List.mem id Ono.Symbolic_ono_module.supported_constraints))
       constraints
   in
   if invalid_constraints <> [] then
     let constraints =
-      invalid_constraints |> List.map string_of_int |> String.concat ", "
+      invalid_constraints
+      |> List.map (fun { Ono.Symbolic_ono_module.id; _ } -> string_of_int id)
+      |> String.concat ", "
     in
     Error (`Msg ("contrainte non supportee: " ^ constraints))
   else

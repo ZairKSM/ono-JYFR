@@ -4,15 +4,16 @@ Test the output of the man page:
          ono-symbolic
   
   SYNOPSIS
-         ono symbolic [--constraint=ID] [OPTION]… FILE
+         ono symbolic [--constraint=ID[:N]] [OPTION]… FILE
   
   ARGUMENTS
          FILE (required)
              Source file to analyze.
   
   OPTIONS
-         --constraint=ID
-             Active la contrainte ID pour la génération symbolique.
+         --constraint=ID[:N]
+             Active la contrainte ID[:N] pour la génération symbolique.
+             Utiliser ID:N pour les contraintes paramétrées.
   
   COMMON OPTIONS
          --color=WHEN (absent=auto)
@@ -69,3 +70,26 @@ Test the output of the man page:
   SEE ALSO
          ono(1)
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
