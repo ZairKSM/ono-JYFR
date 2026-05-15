@@ -40,10 +40,10 @@ let read_int () : Kdo.Symbolic.I32.t Kdo.Symbolic.Choice.t =
   Kdo.Symbolic.Choice.return (Kdo.Symbolic.I32.of_int n)
 
 let get_generation_width () : Kdo.Symbolic.I32.t Kdo.Symbolic.Choice.t =
-  Kdo.Symbolic.Choice.return (Kdo.Symbolic.I32.of_int Generation_config.width)
+  Kdo.Symbolic.Choice.return (Kdo.Symbolic.I32.of_int !Generation_config.width)
 
 let get_generation_height () : Kdo.Symbolic.I32.t Kdo.Symbolic.Choice.t =
-  Kdo.Symbolic.Choice.return (Kdo.Symbolic.I32.of_int Generation_config.height)
+  Kdo.Symbolic.Choice.return (Kdo.Symbolic.I32.of_int !Generation_config.height)
 
 let get_constraints () : Kdo.Symbolic.I32.t Kdo.Symbolic.Choice.t =
   Kdo.Symbolic.Choice.return (Kdo.Symbolic.I32.of_int !active_constraints)
