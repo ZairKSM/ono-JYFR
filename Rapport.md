@@ -65,11 +65,14 @@ Pour l'exécution symbolique du générateur on utilise --constraint=ID ou --con
 # génération symbolique sans contrainte explicite
 dune exec ono -- symbolic game-of-life/generation/generate.wat 
 
-# génération symbolique avec la contrainte 17 avec N a 6
+# génération symbolique avec la contrainte 17 avec N a 6 et la taille de base (-w 6 -h 7)
 dune exec ono -- symbolic game-of-life/generation/generate.wat --constraint=17:6
 
-# génération symbolique avec la contrainte 5
+# génération symbolique avec la contrainte 5 et la taille de base (-w 6 -h 7)
 dune exec ono -- symbolic game-of-life/generation/generate.wat --constraint=5
+
+# générateur symbolique avec la contrainte 9 et une taille de grille 10x10
+dune exec ono -- symbolic game-of-life/generation/generate.wat --constraint=9 -h 10 -w 10
 ```
 
 pour tester la génération symbolique, on peut aussi exécuter le simulateur concret sur la configuration générée:
@@ -163,7 +166,11 @@ Le tableau suivant reprend les demandes du `README` dans leur ordre d'apparition
 
 ## Points subtils 
 
+- La partie solveur de polynômes n'est pas juste au sens mathématique, de part le fonctionnement de l'éxécution symbolique, le modèle produit parfois des racines fausses lorsque le polynôme ne possède pas 3 racines différentes (regarder le code et les breadcrumbs pour connaître le nombre de racines effectives). L'arithmétique modulo 2^32 produit également des racines fausses.
+
 ## Difficultés 
+
+- Produire un résultat satisfaisant pour le solveur de polynômes.
 
 ## Échecs
 
