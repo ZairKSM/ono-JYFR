@@ -163,7 +163,11 @@ Le tableau suivant reprend les demandes du `README` dans leur ordre d'apparition
 
 ## Points subtils 
 
+- La partie solveur de polynômes n'est pas juste au sens mathématique, de part le fonctionnement de l'éxécution symbolique, le modèle produit parfois des racines fausses lorsque le polynôme ne possède pas 3 racines différentes (regarder le code et les breadcrumbs pour connaître le nombre de racines effectives). L'arithmétique modulo 2^32 produit également des racines fausses.
+
 ## Difficultés 
+
+- Produire un résultat satisfaisant pour le solveur de polynômes.
 
 ## Échecs
 
