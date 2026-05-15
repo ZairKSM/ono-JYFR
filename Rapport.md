@@ -78,7 +78,7 @@ pour tester la génération symbolique, on peut aussi exécuter le simulateur co
 dune exec ono -- concrete --config=game-of-life/generation/generate.gol --steps 2 --show_latest 2  -w 15 -h 15 game-of-life/game_of_life.wat 
 ``` 
 
-Contraintes disponibles:
+Contraintes disponibles, Au tour suivant on a:
 - `1` cellule `(0,0)` vivante au tour suivant
 - `2` cellule `(0,0)` morte au tour suivant
 - `3` au moins une cellule vivante au tour suivant
@@ -87,6 +87,9 @@ Contraintes disponibles:
 - `6` une ligne horizontale complète de cellules vivantes
 - `7` une colonne complète de cellules vivantes
 - `8` exactement `35` cellules vivantes au tour suivant
+- `9` il existe une cellule isolée (i.e. dont toutes les cellules voisines sont mortes)
+- `10` il existe une cellule entourée de cellules vivantes
+- `11` il existe deux cellules vivantes cote a cote (horizontal ou vertical)
 - `12` présence d'un motif en `L`
 - `13` présence d'un carré `NxN` de cellules vivantes (valeur de basse `2` pour `N`)
 - `14` existence d'une cellule morte qui devient vivante
