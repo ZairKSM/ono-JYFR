@@ -173,10 +173,10 @@ let write_generated_file ~model_file ~output_file =
       offset_row = 0;
       offset_col = 0;
       alive_cells =
-        alive_cells_of_symbolic_model ~width:Generation_config.width
-          ~height:Generation_config.height cells;
+        alive_cells_of_symbolic_model ~width:!Generation_config.width
+          ~height:!Generation_config.height cells;
     }
   in
   write_file
-    ~dimensions:(Generation_config.height, Generation_config.width)
+    ~dimensions:(!Generation_config.height, !Generation_config.width)
     output_file config

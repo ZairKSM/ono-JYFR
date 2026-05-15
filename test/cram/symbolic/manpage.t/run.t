@@ -4,7 +4,8 @@ Test the output of the man page:
          ono-symbolic
   
   SYNOPSIS
-         ono symbolic [--constraint=ID[:N]] [OPTION]… FILE
+         ono symbolic [--constraint=ID[:N]] [--height=HEIGHT] [--width=WIDTH]
+         [OPTION]… FILE
   
   ARGUMENTS
          FILE (required)
@@ -14,6 +15,12 @@ Test the output of the man page:
          --constraint=ID[:N]
              Active la contrainte ID[:N] pour la génération symbolique.
              Utiliser ID:N pour les contraintes paramétrées.
+  
+         -h HEIGHT, --height=HEIGHT
+             Hauteur de la grille du jeu de la vie.
+  
+         -w WIDTH, --width=WIDTH
+             Largeur de la grille du jeu de la vie.
   
   COMMON OPTIONS
          --color=WHEN (absent=auto)

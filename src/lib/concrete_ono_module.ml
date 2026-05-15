@@ -84,10 +84,10 @@ let read_int () : (Kdo.Concrete.I32.t, _) Result.t =
   Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int n))
 
 let get_generation_width () : (Kdo.Concrete.I32.t, _) Result.t =
-  Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int Generation_config.width))
+  Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int !Generation_config.width))
 
 let get_generation_height () : (Kdo.Concrete.I32.t, _) Result.t =
-  Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int Generation_config.height))
+  Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int !Generation_config.height))
 
 (* Renvoie 1 si la cellule (row, col) est vivante dans la config initiale, 0 sinon *)
 let is_alive_init (row : Kdo.Concrete.I32.t) (col : Kdo.Concrete.I32.t) :
