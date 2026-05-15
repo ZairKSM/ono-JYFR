@@ -65,11 +65,14 @@ Pour l'exécution symbolique du générateur on utilise --constraint=ID ou --con
 # génération symbolique sans contrainte explicite
 dune exec ono -- symbolic game-of-life/generation/generate.wat 
 
-# génération symbolique avec la contrainte 17 avec N a 6
+# génération symbolique avec la contrainte 17 avec N a 6 et la taille de base (-w 6 -h 7)
 dune exec ono -- symbolic game-of-life/generation/generate.wat --constraint=17:6
 
-# génération symbolique avec la contrainte 5
+# génération symbolique avec la contrainte 5 et la taille de base (-w 6 -h 7)
 dune exec ono -- symbolic game-of-life/generation/generate.wat --constraint=5
+
+# générateur symbolique avec la contrainte 9 et une taille de grille 10x10
+dune exec ono -- symbolic game-of-life/generation/generate.wat --constraint=9 -h 10 -w 10
 ```
 
 pour tester la génération symbolique, on peut aussi exécuter le simulateur concret sur la configuration générée:
