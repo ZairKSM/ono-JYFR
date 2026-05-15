@@ -103,6 +103,31 @@ Contraintes disponibles, Au tour suivant on a:
 
 Le mode `symbolic`, va générer une configuration du jeu de la vie qui satisfait une contrainte donnée. Le résultat de cette génération est exporté dans un fichier `.gol` dans le répertoire `game-of-life/generation`, avec un nom du type `generate.gol`.
 
+### Web
+
+La version web se trouve dans le dossier `web/`. Pour installer les dépendances et lancer l'interface en développement:
+
+```sh
+cd web
+npm ci
+npm run dev
+```
+
+La commande `npm run dev` recompile automatiquement `game-of-life/game_of_life.wat` en `web/public/game_of_life.wasm`, puis lance le serveur Vite. L'URL est généralement `http://localhost:5173`.
+
+Commandes utiles pour la partie web:
+
+```sh
+# recompiler uniquement le module Wasm utilisé par l'interface web
+npm run compile:wasm
+
+# construire la version statique
+npm run build
+
+# prévisualiser la version construite
+npm run preview
+```
+
  
 ## Test
 
