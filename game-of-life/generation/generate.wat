@@ -288,6 +288,109 @@
     (i32.eq (call $_next_step_alives) (i32.const 35))   
 )
 
+
+;; Calculate the number of alive neighbours
+  (func $nb_neighbours_next (param $row i32) (param $col i32) (result i32)
+    (local $count i32) ;; counter of alive neighbour
+    (local $dr i32) ;; delta for rows
+    (local $dc i32) ;; delta for colums
+    (local.set $count (i32.const 0))
+    (local.set $dr (i32.const -1))
+    (loop $outer
+      (local.set $dc (i32.const -1))
+      (loop $inner
+        ;; don't check yourself
+        (if (i32.or
+                (i32.ne (local.get $dr) (i32.const 0))
+                (i32.ne (local.get $dc) (i32.const 0))
+            )
+        (then
+            ;; Check neighbour at (row + dr, col + dc)
+            (local.set $count
+              (i32.add
+                (local.get $count)
+                (call $next_state
+                  (i32.add (local.get $row) (local.get $dr))
+                  (i32.add (local.get $col) (local.get $dc))
+                )
+              )
+            )
+        )
+        )
+
+        (local.set $dc (i32.add (local.get $dc) (i32.const 1)))
+        ;; If dc <= 1, continue inner loop
+        (br_if $inner (i32.le_s (local.get $dc) (i32.const 1)))
+      )
+      (local.set $dr (i32.add (local.get $dr) (i32.const 1)))
+      ;; If dr <= 1, continue outer loop
+      (br_if $outer (i32.le_s (local.get $dr) (i32.const 1)))
+    )
+
+    (local.get $count)
+  )
+ 
+;; 10 Au tour suivant, il existe une cellule entourée de cellules vivantes.
+(func $contrainte_10 (result i32)
+  (local $i i32)
+  (local.set $i (i32.const 0))
+  (loop $init
+    (if
+      (i32.and
+        (call $next_state (call $to_coords (local.get $i)))
+        (i32.eq (call $nb_neighbours_next (call $to_coords (local.get $i))) (i32.const 8)))
+      (then (return (i32.const 1))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (i32.const 0)
+)
+
+;; 9 Au tour suivant, il existe une cellule isolée (i.e. dont toutes les cellules voisines sont mortes).
+(func $contrainte_9 (result i32)
+  (local $i i32)
+  (local.set $i (i32.const 0))
+  (loop $init
+    (if
+      (i32.and
+        (call $next_state (call $to_coords (local.get $i)))
+        (i32.eqz (call $nb_neighbours_next (call $to_coords (local.get $i)))))
+      (then (return (i32.const 1))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $init (i32.lt_u (local.get $i) (global.get $total_len))))
+  (i32.const 0)
+)
+
+;; 11 Au tour suivant, il existe deux cellules vivantes cote a cote (horizontal ou vertical).
+(func $contrainte_11 (result i32)
+  (local $i i32)
+  (local $j i32)
+  (local.set $i (i32.const 0))
+  (loop $outer
+    (local.set $j (i32.const 0))
+    (loop $inner
+      ;; paire horizontale : (i, j) et (i, j+1)
+      (if
+        (i32.and
+          (i32.lt_u (i32.add (local.get $j) (i32.const 1)) (global.get $w))
+          (i32.and
+            (call $next_state (local.get $i) (local.get $j))
+            (call $next_state (local.get $i) (i32.add (local.get $j) (i32.const 1)))))
+        (then (return (i32.const 1))))
+      ;; paire verticale : (i, j) et (i+1, j)
+      (if
+        (i32.and
+          (i32.lt_u (i32.add (local.get $i) (i32.const 1)) (global.get $h))
+          (i32.and
+            (call $next_state (local.get $i) (local.get $j))
+            (call $next_state (i32.add (local.get $i) (i32.const 1)) (local.get $j))))
+        (then (return (i32.const 1))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $inner (i32.lt_u (local.get $j) (global.get $w))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $outer (i32.lt_u (local.get $i) (global.get $h))))
+  (i32.const 0)
+)
+
 ;; Au tour suivant, il existe un motif en L de trois cellules vivantes.
 (func $contrainte_12 (result i32)
   (local $i i32)
@@ -690,9 +793,9 @@
     $contrainte_6
     $contrainte_7
     $contrainte_8
-    $contrainte_vide
-    $contrainte_vide
-    $contrainte_vide
+    $contrainte_9
+    $contrainte_10
+    $contrainte_11
     $contrainte_12
     $contrainte_13_check
     $contrainte_14

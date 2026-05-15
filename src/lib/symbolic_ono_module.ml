@@ -1,6 +1,6 @@
 type extern_func = Kdo.Symbolic.Extern_func.extern_func
 
-let supported_constraints = [ 1; 2; 3; 4; 5; 6; 7; 8; 12; 13; 14; 15; 16; 17 ]
+let supported_constraints = [ 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; 17 ]
 let active_constraints : int ref = ref 0
 
 let set_constraints constraints =
