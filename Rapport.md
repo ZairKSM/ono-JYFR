@@ -59,14 +59,17 @@ dune exec ono -- concrete --use-graphical-window --config=game-of-life/configs/p
 
 ### Symbolic
 
-Exécution symbolique du générateur:
+Pour l'exécution symbolique du générateur on utilise --constraint=ID ou --constraint=ID:N pour appliquer une contrainte spécifique à la génération, par exemple:
 
 ```sh
 # génération symbolique sans contrainte explicite
 dune exec ono -- symbolic game-of-life/generation/generate.wat 
 
-# génération symbolique avec la contrainte 17
-dune exec ono -- symbolic game-of-life/generation/generate.wat --constraint=17
+# génération symbolique avec la contrainte 17 avec N a 6
+dune exec ono -- symbolic game-of-life/generation/generate.wat --constraint=17:6
+
+# génération symbolique avec la contrainte 5
+dune exec ono -- symbolic game-of-life/generation/generate.wat --constraint=5
 ```
 
 pour tester la génération symbolique, on peut aussi exécuter le simulateur concret sur la configuration générée:
@@ -85,11 +88,11 @@ Contraintes disponibles:
 - `7` une colonne complète de cellules vivantes
 - `8` exactement `35` cellules vivantes au tour suivant
 - `12` présence d'un motif en `L`
-- `13` présence d'un carré `2x2` de cellules vivantes
+- `13` présence d'un carré `NxN` de cellules vivantes (valeur de basse `2` pour `N`)
 - `14` existence d'une cellule morte qui devient vivante
-- `15` présence d'une alternance vivant/mort sur une longueur `4`
+- `15` présence d'une alternance vivant/mort sur une longueur `N` (valeur de basse `4` pour `N`)
 - `16` présence d'un motif clignotant de période `2`
-- `17` présence d'une diagonale vivante de longueur `4`
+- `17` présence d'une diagonale vivante de longueur `N` (valeur de basse `4` pour `N`)
 
 
 Le mode `symbolic`, va générer une configuration du jeu de la vie qui satisfait une contrainte donnée. Le résultat de cette génération est exporté dans un fichier `.gol` dans le répertoire `game-of-life/generation`, avec un nom du type `generate.gol`.
