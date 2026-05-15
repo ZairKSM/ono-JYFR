@@ -110,20 +110,20 @@ let constraint_conv =
       | None -> Fmt.error_msg "valeur de contrainte invalide: %s" value
     in
     match String.split_on_char ':' s with
-    | [ id ] -> begin
-        match parse_int id with
+    | [ id ] ->
+        begin match parse_int id with
         | Ok id -> Ok Ono.Symbolic_ono_module.{ id; arg = None }
         | Error _ as e -> e
-      end
-    | [ id; arg ] -> begin
-        match parse_int id with
+        end
+    | [ id; arg ] ->
+        begin match parse_int id with
         | Error _ as e -> e
-        | Ok id -> begin
-            match parse_int arg with
+        | Ok id ->
+            begin match parse_int arg with
             | Error _ as e -> e
             | Ok arg -> Ok Ono.Symbolic_ono_module.{ id; arg = Some arg }
-          end
-      end
+            end
+        end
     | _ -> Fmt.error_msg "format de contrainte attendu: ID ou ID:N"
   in
   let print fmt { Ono.Symbolic_ono_module.id; arg } =
@@ -135,9 +135,12 @@ let constraint_conv =
 
 let constraints =
   let doc =
-    "Active la contrainte $(docv) pour la génération symbolique. Utiliser ID:N pour les contraintes paramétrées."
+    "Active la contrainte $(docv) pour la génération symbolique. Utiliser ID:N \
+     pour les contraintes paramétrées."
   in
-  Arg.(value & opt_all constraint_conv [] (info [ "constraint" ] ~doc ~docv:"ID[:N]"))
+  Arg.(
+    value
+    & opt_all constraint_conv [] (info [ "constraint" ] ~doc ~docv:"ID[:N]"))
 
 let graphics =
   let doc = "Active le rendu graphique via une fenetre Raylib." in

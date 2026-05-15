@@ -1,13 +1,12 @@
 type extern_func = Kdo.Symbolic.Extern_func.extern_func
 
-let supported_constraints = [ 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; 17 ]
+let supported_constraints =
+  [ 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; 17 ]
+
 let active_constraints : int ref = ref 0
 let active_constraint_args : (int, int) Hashtbl.t = Hashtbl.create 8
 
-type constraint_spec = {
-  id : int;
-  arg : int option;
-}
+type constraint_spec = { id : int; arg : int option }
 
 let default_constraint_arg = function 13 -> 2 | 15 -> 4 | 17 -> 4 | _ -> 0
 
@@ -20,9 +19,7 @@ let set_constraints constraints =
       | None -> ())
     constraints;
   active_constraints :=
-    List.fold_left
-      (fun a { id; _ } -> a lor (1 lsl id))
-      0 constraints
+    List.fold_left (fun a { id; _ } -> a lor (1 lsl id)) 0 constraints
 
 let print_i32 (n : Kdo.Symbolic.I32.t) : unit Kdo.Symbolic.Choice.t =
   Logs.app (fun m -> m "%a" Kdo.Symbolic.I32.pp n);
@@ -79,9 +76,12 @@ let m =
       ( "get_generation_height",
         Extern_func (unit ^->. i32, get_generation_height) );
       ("get_constraints", Extern_func (unit ^->. i32, get_constraints));
-      ("get_constraint_13_arg", Extern_func (unit ^->. i32, get_constraint_13_arg));
-      ("get_constraint_15_arg", Extern_func (unit ^->. i32, get_constraint_15_arg));
-      ("get_constraint_17_arg", Extern_func (unit ^->. i32, get_constraint_17_arg));
+      ( "get_constraint_13_arg",
+        Extern_func (unit ^->. i32, get_constraint_13_arg) );
+      ( "get_constraint_15_arg",
+        Extern_func (unit ^->. i32, get_constraint_15_arg) );
+      ( "get_constraint_17_arg",
+        Extern_func (unit ^->. i32, get_constraint_17_arg) );
     ]
   in
   {
