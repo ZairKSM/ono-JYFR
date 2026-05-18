@@ -38,12 +38,19 @@ let get_show_latest () : (Kdo.Concrete.I32.t, _) Result.t =
   let show_latest = match !show_latest_number with Some n -> n | None -> -1 in
   Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int show_latest))
 
+let sleep_cpt = ref 0
+
 (* atendre ms milliseconde *)
 let sleep (ms : Kdo.Concrete.I32.t) : (unit, _) Result.t =
   let ms = Kdo.Concrete.I32.to_int ms in
   let seconds = float_of_int ms /. 1000.0 in
-  (* si on doit montrer les x derniers on fait pas de sleep car faignon*)
-  if !show_latest_number == None then Unix.sleepf seconds;
+  incr sleep_cpt;
+  let should_sleep =
+    match (!show_latest_number, !steps_limit) with
+    | Some latest, Some total -> !sleep_cpt > total - latest
+    | _ -> true
+  in
+  if should_sleep then Unix.sleepf seconds;
   Ok ()
 
 (* Affiche une cellule vivante ou morte
