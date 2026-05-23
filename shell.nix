@@ -35,10 +35,22 @@ pkgs.mkShell {
   buildInputs = with pkgs.ocamlPackages; [
     bos
     cmdliner
+    digestif
+    dune-build-info
+    dune-site
     fpath
+    logs
     menhirLib
+    ocaml_intrinsics
+    ocamlgraph
+    prelude
+    processor
     raylib
     smtml
+    synchronizer
+    uutf
+    xmlm
+    z3
     pkgs.owi
   ];
 }
