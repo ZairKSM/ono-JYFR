@@ -1,10 +1,7 @@
 (** Fonctions hôtes exposées au mode symbolique. *)
 
 (** Spécification d'une contrainte activée en ligne de commande. *)
-type constraint_spec = {
-  id : int;
-  arg : int option;
-}
+type constraint_spec = { id : int; arg : int option }
 
 (** Identifiants de contraintes pris en charge par le générateur. *)
 val supported_constraints : int list

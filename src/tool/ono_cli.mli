@@ -1,4 +1,3 @@
-
 (** Résultat standard des commandes CLI du projet. *)
 type outcome = (unit, [ Ono.Error.t | Cmdliner.Cmd.eval_error ]) Result.t
 

@@ -14,7 +14,8 @@ val default_glider : t
 (** Lit une configuration [*.gol] depuis un fichier. *)
 val parse_file : Fpath.t -> (t, [> `Msg of string ]) result
 
-(** Sérialise une configuration au format [*.gol] en conservant les dimensions fournies. *)
+(** Sérialise une configuration au format [*.gol] en conservant les dimensions
+    fournies. *)
 val to_string : dimensions:int * int -> t -> string
 
 (** Écrit une configuration [*.gol] sur disque. *)
@@ -23,4 +24,6 @@ val write_file :
 
 (** Convertit un modèle symbolique [*.scfg] en fichier [*.gol]. *)
 val write_generated_file :
-  model_file:Fpath.t -> output_file:Fpath.t -> (unit, [> `Msg of string ]) result
+  model_file:Fpath.t ->
+  output_file:Fpath.t ->
+  (unit, [> `Msg of string ]) result
