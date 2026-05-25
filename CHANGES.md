@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 - ajout des dépandance manquante pour Nix ([#69](https://github.com/ZairKSM/ono-JYFR/issues/69))
 
+### [2.0.1] - 2026-05-26
+### Changed
+- le sleep ne s'active plus lors des `$step` - `$show_latest` premières étapes ([#68](https://github.com/ZairKSM/ono-JYFR/issues/68))
 
 ### [2.0.0] - 2026-04-15
 ### Added
