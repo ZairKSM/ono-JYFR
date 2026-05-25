@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 - le sleep ne s'active plus lors des `$step` - `$show_latest` premières étapes ([#68](https://github.com/ZairKSM/ono-JYFR/issues/68))
-- changement du doc pour l'option `--show_latest`
+- changement du doc pour l'option `--show_latest`([#71](https://github.com/ZairKSM/ono-JYFR/issues/71))
 
 ### [2.0.0] - 2026-04-15
 ### Added
