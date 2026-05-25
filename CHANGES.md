@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Release History
 
+### [2.0.1] - 2026-04-24
+### Added
+- ajout des dépandance manquante pour Nix ([#69](https://github.com/ZairKSM/ono-JYFR/issues/69))
 
 
 ### [2.0.0] - 2026-04-15
