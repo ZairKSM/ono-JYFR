@@ -1,5 +1,6 @@
 (* Error infrastructure. *)
 
+(** Type d'erreurs remontées par la bibliothèque. *)
 type t =
   [ `Msg of string
   | `Call_stack_exhausted

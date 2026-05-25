@@ -1,5 +1,3 @@
-type extern_func = Kdo.Concrete.Extern_func.extern_func
-
 let config : Gol_config.t ref = ref Gol_config.default_glider
 let set_config c = config := c
 
@@ -66,7 +64,7 @@ let newline () : (unit, _) Result.t =
   M.newline ()
 
 (*
-  dans le Readme : 
+  dans le Readme :
   "afficher le contenu du buffer à l'écran puis vider celui-ci en prévision du prochain affichage"
   En mode show_latest, affichage plain sans séquences ANSI (pour les cram tests).
 *)
