@@ -83,7 +83,7 @@ let steps =
   Arg.(value & opt (some int) None (info [ "steps" ] ~doc ~docv:"STEPS"))
 
 let show_latest =
-  let doc = "affiche les n dernière configuration." in
+  let doc = "affiche les n dernière configuration. (doit être activé avec l'option step)" in
   Arg.(
     value
     & opt (some int) None (info [ "show_latest" ] ~doc ~docv:"SHOW_LATEST"))
