@@ -19,7 +19,6 @@
     )
     
     (func $main
-        ;; 🈲​🈹​🈴​ interdit 🇩🇪🇩🇪
         (call $print_i32 (call $factorial (i32.const 5)) )
     )
     

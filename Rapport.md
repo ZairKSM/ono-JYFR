@@ -59,6 +59,15 @@ dune exec ono -- concrete --use-graphical-window --config=game-of-life/configs/p
 
 ### Symbolic
 
+#### Solveur de polynômes 
+
+Le module Wasm pour résoudre les polynômes est dans `solver/poly_solve.wat`. 
+
+Pour le lancer `ono symbolic solver/poly_solve.wat`, puis entrer 4 entiers qui représentent respectivement les coefficients $a$, $b$, $c$ et $d$.
+
+
+#### Générateur de configuraions
+
 Pour l'exécution symbolique du générateur on utilise --constraint=ID ou --constraint=ID:N pour appliquer une contrainte spécifique à la génération, par exemple:
 
 ```sh
