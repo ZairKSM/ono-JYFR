@@ -68,6 +68,7 @@ export function createWasmImports(config, renderer, { gridSize }) {
       sleep: () => undefined,
       get_steps: () => 0,
       get_show_latest: () => -1,
+      random_i32: () => Math.floor(Math.random() * 0x7fffffff),
       print_i32: (value) => console.log(value)
     }
   };
