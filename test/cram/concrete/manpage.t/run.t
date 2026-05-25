@@ -21,7 +21,8 @@ Test the output of the man page:
              seed pour pouvoire test les random.
   
          --show_latest=SHOW_LATEST
-             affiche les n dernière configuration.
+             affiche les n dernière configuration. (doit être activé avec
+             l'option step)
   
          --steps=STEPS
              Nombre d'étapes a simuler (infini par defaut).
