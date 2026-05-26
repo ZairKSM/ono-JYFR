@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### [2.0.1] - 2026-05-26
 ### Added
+- ajout des fichiers `.mli` manquants et de la documentation `odoc` ([#73](https://github.com/ZairKSM/ono-JYFR/issues/73))
+- ajout de précisions dans le rapport sur le solveur de polynômes et la partie web ([#70](https://github.com/ZairKSM/ono-JYFR/issues/70))
+
+### Fixed
+- correction de la version web sur Chrome/Firefox en ajoutant l'import `random_i32` côté JavaScript ([#77](https://github.com/ZairKSM/ono-JYFR/issues/77))
 - ajout des dépandance manquante pour Nix ([#69](https://github.com/ZairKSM/ono-JYFR/issues/69))
 
 ### Changed
